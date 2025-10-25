@@ -8,21 +8,6 @@ datasource db {
 }
 
 model User {
-<<<<<<< HEAD
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  accounts       Account[]
-  sessions       Session[]
-
-  tripPlans      TripPlan[]
-  favorites      Favorite[]
-=======
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
@@ -35,7 +20,6 @@ model User {
   sessions  Session[]
   tripPlans TripPlan[]
   favorites Favorite[]
->>>>>>> 21007fe (Switch to Postgres + add NextAuth tables)
 
   @@map("users")
 }
@@ -55,10 +39,6 @@ model Account {
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-<<<<<<< HEAD
-
-=======
->>>>>>> 21007fe (Switch to Postgres + add NextAuth tables)
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
@@ -70,10 +50,6 @@ model Session {
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-<<<<<<< HEAD
-
-=======
->>>>>>> 21007fe (Switch to Postgres + add NextAuth tables)
   @@map("sessions")
 }
 
@@ -94,13 +70,7 @@ model TripPlan {
   items     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-<<<<<<< HEAD
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-=======
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
->>>>>>> 21007fe (Switch to Postgres + add NextAuth tables)
   @@map("trip_plans")
 }
 
@@ -109,13 +79,7 @@ model Favorite {
   userId    String
   citySlug  String
   createdAt DateTime @default(now())
-<<<<<<< HEAD
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-=======
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
->>>>>>> 21007fe (Switch to Postgres + add NextAuth tables)
   @@unique([userId, citySlug])
   @@map("favorites")
 }
