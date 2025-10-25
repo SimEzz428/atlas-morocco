@@ -1,0 +1,14 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "id": "marrakech-medina", "name": "Marrakech Medina", "category": "architecture", "city": "Marrakech", "durationMin": 120, "priceBand": "low", "impact": { "local": true, "women_led": false, "coop": false } }, "geometry": { "type": "Point", "coordinates": [-7.9811, 31.6295] } },
+    { "type": "Feature", "properties": { "id": "jemaa-el-fnaa", "name": "Jemaa el-Fnaa", "category": "food", "city": "Marrakech", "durationMin": 90, "priceBand": "low", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-7.989, 31.625] } },
+    { "type": "Feature", "properties": { "id": "majorelle", "name": "Jardin Majorelle", "category": "architecture", "city": "Marrakech", "durationMin": 75, "priceBand": "mid", "impact": { "local": false } }, "geometry": { "type": "Point", "coordinates": [-8.0057, 31.6423] } },
+    { "type": "Feature", "properties": { "id": "fes-souk", "name": "Fès Souk", "category": "handicrafts", "city": "Fès", "durationMin": 120, "priceBand": "low", "impact": { "local": true, "coop": true } }, "geometry": { "type": "Point", "coordinates": [-4.983, 34.033] } },
+    { "type": "Feature", "properties": { "id": "chefchaouen-medina", "name": "Chefchaouen Medina", "category": "architecture", "city": "Chefchaouen", "durationMin": 120, "priceBand": "low", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-5.2689, 35.1714] } },
+    { "type": "Feature", "properties": { "id": "taghazout", "name": "Taghazout", "category": "surf", "city": "Agadir", "durationMin": 180, "priceBand": "mid", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-9.7167, 30.5333] } },
+    { "type": "Feature", "properties": { "id": "essaouira-port", "name": "Essaouira Port", "category": "food", "city": "Essaouira", "durationMin": 90, "priceBand": "low", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-9.77, 31.51] } },
+    { "type": "Feature", "properties": { "id": "hassan-tower", "name": "Hassan Tower", "category": "architecture", "city": "Rabat", "durationMin": 60, "priceBand": "low", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-6.8228, 34.0153] } },
+    { "type": "Feature", "properties": { "id": "chella", "name": "Chellah", "category": "history", "city": "Rabat", "durationMin": 90, "priceBand": "mid", "impact": { "local": true } }, "geometry": { "type": "Point", "coordinates": [-6.8063, 34.0085] } }
+  ]
+}

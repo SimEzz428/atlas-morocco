@@ -1,0 +1,148 @@
+/Users/simo/MAR/atlas-morocco/src
+├── app
+│   ├── api
+│   │   ├── auth
+│   │   │   └── [...nextauth]
+│   │   │       └── route.ts
+│   │   ├── cities
+│   │   │   ├── [slug]
+│   │   │   │   ├── places
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── fx
+│   │   │   └── route.ts
+│   │   ├── photos
+│   │   │   └── route.ts
+│   │   ├── places
+│   │   │   └── [city]
+│   │   │       └── route.ts
+│   │   ├── plan
+│   │   │   └── route.ts
+│   │   ├── signals
+│   │   │   ├── [...path]
+│   │   │   │   └── route.ts
+│   │   │   ├── fx
+│   │   │   │   └── route.ts
+│   │   │   └── weather
+│   │   │       └── route.ts
+│   │   ├── trends
+│   │   │   └── route.ts
+│   │   ├── unsplash
+│   │   │   └── route.ts
+│   │   └── weather
+│   │       └── route.ts
+│   ├── auth
+│   │   └── signin
+│   │       └── page.tsx
+│   ├── cities
+│   │   ├── [id]
+│   │   │   ├── Map.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── screen.tsx
+│   │   └── page.tsx
+│   ├── explore
+│   │   ├── MapView.tsx
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── favorites
+│   │   └── page.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.module.css
+│   ├── page.tsx
+│   ├── plan
+│   │   └── page.tsx
+│   ├── share
+│   │   └── trip
+│   │       └── [tripData]
+│   │           └── page.tsx
+│   └── test-images
+├── components
+│   ├── AddToPlanButton.tsx
+│   ├── AttractionsGrid.tsx
+│   ├── CitySearch.tsx
+│   ├── CityTabContent.tsx
+│   ├── FavoritesManager.tsx
+│   ├── Footer.tsx
+│   ├── Gallery.tsx
+│   ├── Hero.tsx
+│   ├── InteractiveMap.tsx
+│   ├── LeafletMap.tsx
+│   ├── MiniMap.tsx
+│   ├── MotionRoot.tsx
+│   ├── Navbar.tsx
+│   ├── OptimizedImage.tsx
+│   ├── PerformanceMonitor.tsx
+│   ├── PlanCard.tsx
+│   ├── PlannerMap.tsx
+│   ├── ServiceWorker.tsx
+│   ├── SmartSuggestions.tsx
+│   ├── TabNavigation.tsx
+│   ├── ThemeProvider.tsx
+│   ├── TripShare.tsx
+│   └── ui
+│       ├── Badge.tsx
+│       ├── Button.tsx
+│       ├── Card.tsx
+│       ├── Container.tsx
+│       ├── KPI.tsx
+│       └── Section.tsx
+├── data
+│   ├── attractions.ts
+│   ├── cities.ts
+│   └── places.ts
+├── features
+│   ├── cities
+│   │   └── components
+│   │       ├── CityCard.tsx
+│   │       ├── CityMiniCard.tsx
+│   │       ├── CityScreen.tsx
+│   │       └── Gallery.tsx
+│   ├── explorer
+│   │   ├── components
+│   │   │   ├── Filters.tsx
+│   │   │   └── MapView.tsx
+│   │   └── hooks
+│   │       └── useClusters.ts
+│   ├── map
+│   │   ├── CityMap.tsx
+│   │   └── HeatOverlay.tsx
+│   ├── plan
+│   │   ├── components
+│   │   │   └── PlannerScreen.tsx
+│   │   └── usePlan.ts
+│   ├── planner
+│   │   ├── components
+│   │   │   ├── PlanCard.tsx
+│   │   │   ├── Planner.tsx
+│   │   │   └── Quiz.tsx
+│   │   └── utils
+│   │       ├── geo.ts
+│   │       ├── schema.ts
+│   │       └── url.ts
+│   └── signals
+│       ├── components
+│       │   ├── CitySignals.tsx
+│       │   └── SignalsPanel.tsx
+│       ├── FxCard.tsx
+│       ├── hooks
+│       │   └── useSignals.ts
+│       └── WeatherCard.tsx
+├── lib
+│   ├── abs-url.ts
+│   ├── auth.ts
+│   ├── db.ts
+│   ├── env.ts
+│   ├── geo.ts
+│   ├── logger.ts
+│   ├── result.ts
+│   ├── theme.ts
+│   ├── types.ts
+│   └── utils.ts
+└── server
+    ├── api
+    ├── db.ts
+    └── services
+
+53 directories, 93 files

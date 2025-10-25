@@ -1,0 +1,9 @@
+{
+  "cities": [
+    { "id": "marrakech", "name": "Marrakech", "score": 92 },
+    { "id": "chefchaouen", "name": "Chefchaouen", "score": 81 },
+    { "id": "essaouira", "name": "Essaouira", "score": 76 },
+    { "id": "fes", "name": "Fès", "score": 70 },
+    { "id": "rabat", "name": "Rabat", "score": 64 }
+  ]
+}
