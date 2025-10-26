@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { absUrl } from "@/lib/abs-url";
 import { ArrowRight, MapPin, Calendar, Users, Globe, Compass } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
@@ -15,16 +16,10 @@ const featuredCities = [
 ];
 
 async function getCityImage(cityName: string) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/unsplash?q=${encodeURIComponent(cityName)} morocco&per_page=1&w=600&h=400`,
-      { next: { revalidate: 3600 } }
-    );
-    const data = await response.json();
-    return data.images?.[0]?.src || null;
-  } catch {
-    return null;
-  }
+  const w = 600;
+  const h = 400;
+  const q = encodeURIComponent(`${cityName} morocco`);
+  return `https://source.unsplash.com/${w}x${h}/?${q}`;
 }
 
 export default async function HomePage() {
