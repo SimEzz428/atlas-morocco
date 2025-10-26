@@ -18,7 +18,11 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    // capture any error passed by NextAuth (?error=...)
+    const url = new URL(window.location.href);
+    const errParam = url.searchParams.get("error");
+    if (errParam) setError("Invalid email or password");
+    else setError("");
 
     try {
       const result = await signIn("credentials", {
@@ -28,7 +32,7 @@ export default function SignInPage() {
       });
 
       if (result?.error) {
-        setError("Invalid credentials");
+        setError("Invalid email or password");
       } else {
         
         const session = await getSession();
