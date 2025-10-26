@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { absUrl } from "@/lib/abs-url";
 import { ArrowRight, MapPin, Calendar, Users, Globe, Compass } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
@@ -15,22 +14,31 @@ const featuredCities = [
   { name: "Rabat", slug: "rabat", description: "Elegant capital with royal heritage" },
 ];
 
-const HERO_FILE: Record<string, string> = {
-  marrakech: 'koutoubia-mosque.jpg',
-  fes: 'tanneries.jpg',
-  essaouira: 'port.jpg',
-  casablanca: 'hassan-ii-mosque.jpg',
-  chefchaouen: 'blue-streets.jpg',
-  rabat: 'hassan-tower.jpg',
-  tangier: 'kasbah.jpg',
-  agadir: 'beach.jpg',
-  meknes: 'bab-mansour.jpg',
-  ouarzazate: 'ait-ben-haddou.jpg',
-};
-
 async function getCityImage(slug: string) {
-  const file = HERO_FILE[slug] || 'medina.jpg';
-  return `/cities/${slug}/gallery/${file}`;
+  const key = process.env.UNSPLASH_ACCESS_KEY || process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+  const q = `${slug} morocco`;
+  try {
+    if (key) {
+      const api = new URL("https://api.unsplash.com/search/photos");
+      api.searchParams.set("client_id", key);
+      api.searchParams.set("query", q);
+      api.searchParams.set("per_page", "1");
+      api.searchParams.set("content_filter", "high");
+      api.searchParams.set("orientation", "landscape");
+      const r = await fetch(api, { cache: "no-store" });
+      const j = await r.json();
+      const base = j?.results?.[0]?.urls?.regular || j?.results?.[0]?.urls?.full || null;
+      if (base) {
+        const u = new URL(base);
+        u.searchParams.set("w", "600");
+        u.searchParams.set("h", "400");
+        u.searchParams.set("fit", "crop");
+        u.searchParams.set("q", "80");
+        return u.toString();
+      }
+    }
+  } catch {}
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(q)}`;
 }
 
 export default async function HomePage() {
