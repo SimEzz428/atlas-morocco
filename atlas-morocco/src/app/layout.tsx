@@ -8,7 +8,7 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import { ToastProvider } from "@/components/ToastProvider";
 import { PlanProvider } from "@/features/plan/PlanProvider";
 import { SessionProvider } from "next-auth/react";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
 const inter = Inter({ 
