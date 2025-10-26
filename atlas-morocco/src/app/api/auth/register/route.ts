@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    let { email, name } = body || {};
+    let { email, name, password } = body || {};
 
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -22,10 +23,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Account already exists" }, { status: 409 });
     }
 
+    if (!password || typeof password !== 'string' || password.length < 6) {
+      return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
+    }
+
     const created = await prisma.user.create({
       data: {
         email,
         name: typeof name === "string" && name.trim() ? name.trim() : email.split("@")[0],
+        passwordHash: await bcrypt.hash(password, 12),
       },
       select: { id: true, email: true, name: true },
     });

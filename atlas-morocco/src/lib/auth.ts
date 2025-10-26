@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     // Demo credentials provider
     Credentials({
