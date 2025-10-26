@@ -10,6 +10,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   useSecureCookies: process.env.NODE_ENV === "production",
   debug: process.env.NODE_ENV === "development",
   skipCSRFCheck: true,
+  experimental: {
+    enableWebAuthn: false,
+  },
   session: {
     strategy: "jwt",
   },
