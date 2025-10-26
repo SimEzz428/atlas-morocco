@@ -32,19 +32,11 @@ async function getCities() {
 }
 
 async function getCityImage(cityName: string) {
-  try {
-    const params = new URLSearchParams({
-      q: `${cityName} morocco`,
-      per_page: "1",
-      w: "600",
-      h: "400",
-    });
-    const response = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
-    const data = await response.json();
-    return data.images?.[0]?.src || null;
-  } catch {
-    return null;
-  }
+  // Use Unsplash Source to avoid server/API coupling in previews
+  const w = 600;
+  const h = 400;
+  const q = encodeURIComponent(`${cityName} morocco`);
+  return `https://source.unsplash.com/${w}x${h}/?${q}`;
 }
 
 

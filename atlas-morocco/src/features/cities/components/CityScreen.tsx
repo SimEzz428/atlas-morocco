@@ -116,19 +116,12 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const params = new URLSearchParams({ q: searchQuery, per_page: "1", w: "2560", h: "1440" });
-    const response = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
-
-    if (!response.ok) {
-      console.error(`Failed to fetch image for ${cityName}`);
-      return null;
-    }
-
-    const data = await response.json();
-    const imageUrl = data.images?.[0]?.src;
-
+    const w = 2560;
+    const h = 1440;
+    const q = encodeURIComponent(searchQuery);
+    const imageUrl = `https://source.unsplash.com/${w}x${h}/?${q}`;
     console.log(`Getting hero image for ${cityName}:`, imageUrl ? 'Found' : 'Not found');
-    return imageUrl || null;
+    return imageUrl;
   } catch (error) {
     console.error(`Error fetching image for ${cityName}:`, error);
     return null;
