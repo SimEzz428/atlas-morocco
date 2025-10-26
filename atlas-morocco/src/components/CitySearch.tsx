@@ -141,13 +141,11 @@ export default function CitySearch({ cities }: CitySearchProps) {
               {/* City Image */}
               <div className="relative h-48 overflow-hidden">
                 {city.image ? (
-                  <Image
+                  <img
                     src={city.image}
                     alt={`${city.name} cityscape`}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    quality={90}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
