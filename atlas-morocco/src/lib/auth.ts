@@ -8,6 +8,10 @@ import bcrypt from "bcryptjs";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === "production",
+  debug: process.env.NODE_ENV === "development",
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     // Demo credentials provider
     Credentials({
@@ -94,10 +98,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/auth/signin",
     error: "/auth/signin",
-  },
-  
-  session: {
-    strategy: "jwt",
   },
   
   secret: process.env.NEXTAUTH_SECRET || "your-secret-key",
