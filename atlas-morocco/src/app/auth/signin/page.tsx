@@ -30,12 +30,10 @@ export default function SignInPage() {
         callbackUrl: "/plan",
       });
 
-      if (!result || result.error || result.ok === false || result.status === 401) {
-        setError("Invalid email or password");
-      } else if (result?.url) {
-        router.push(result.url);
+      if (result && result.ok) {
+        router.push(result.url ?? "/plan");
       } else {
-        router.push("/plan");
+        setError("Incorrect email or password. Please try again.");
       }
     } catch (error) {
       setError("An error occurred. Please try again.");

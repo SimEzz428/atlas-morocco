@@ -82,7 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   
   pages: {
     signIn: "/auth/signin",
-    // keep error page unset to avoid redirects; client handles inline errors
+    error: "/auth/signin",
   },
   
   session: {
