@@ -19,33 +19,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        // For demo purposes, accept any email/password combination
-        // In production, you would validate against your database
+        // Find user by email; do NOT auto-create on sign-in
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string }
         });
 
-        if (!user) {
-          // Create a demo user if they don't exist
-          const hashedPassword = await bcrypt.hash(credentials.password as string, 12);
-          const newUser = await prisma.user.create({
-            data: {
-              email: credentials.email as string,
-              name: (credentials.email as string).split('@')[0],
-            }
-          });
-          return {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-          };
-        }
+        if (!user) return null;
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        };
+        // NOTE: No password hash stored yet; treat any password as invalid check.
+        // Once a password hash column exists, verify here with bcrypt.compare.
+        return { id: user.id, email: user.email, name: user.name };
       }
     }),
     
