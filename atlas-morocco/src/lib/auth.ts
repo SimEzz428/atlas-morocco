@@ -14,7 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -24,10 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: credentials.email as string }
         });
 
-        if (!user) {
-          // surface an explicit error for better UX
-          throw new Error("CredentialsSignin");
-        }
+        if (!user) return null;
 
         // NOTE: No password hash stored yet; treat any password as invalid check.
         // Once a password hash column exists, verify here with bcrypt.compare.
@@ -81,7 +78,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   
   pages: {
     signIn: "/auth/signin",
-    error: "/auth/signin",
   },
   
   session: {

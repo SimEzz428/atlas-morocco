@@ -18,11 +18,8 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // capture any error passed by NextAuth (?error=...)
-    const url = new URL(window.location.href);
-    const errParam = url.searchParams.get("error");
-    if (errParam) setError("Invalid email or password");
-    else setError("");
+    // clear any prior error on submit
+    setError("");
 
     try {
       const result = await signIn("credentials", {
@@ -31,7 +28,7 @@ export default function SignInPage() {
         redirect: false,
       });
 
-      if (!result || result.error || result.ok === false) {
+      if (!result || result.error || result.ok === false || result.status === 401) {
         setError("Invalid email or password");
       } else {
         router.push("/plan");
