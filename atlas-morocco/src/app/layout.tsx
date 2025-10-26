@@ -98,19 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
               <body className="min-h-screen bg-white text-slate-900 antialiased">
                 <SessionProvider>
-                  <ToastProvider>
-                    <PlanProvider>
-                      <div className="flex flex-col min-h-screen">
-                        <Navbar />
-                        <main className="flex-1">
-                          {children}
-                        </main>
-                        <Footer />
-                      </div>
-                      <ServiceWorker />
-                      <PerformanceMonitor />
-                    </PlanProvider>
-                  </ToastProvider>
+                  {children}
                 </SessionProvider>
               </body>
     </html>
