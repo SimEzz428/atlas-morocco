@@ -32,15 +32,31 @@ async function getCities() {
 }
 
 async function getCityImage(cityName: string) {
-  const params = new URLSearchParams({
-    q: `${cityName} morocco`,
-    per_page: "1",
-    w: "600",
-    h: "400",
-  });
-  const r = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
-  const j = await r.json();
-  return j?.images?.[0]?.src || `/placeholder-morocco.jpg`;
+  const key = process.env.UNSPLASH_ACCESS_KEY || process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+  const q = `${cityName} morocco`;
+  try {
+    if (key) {
+      const api = new URL("https://api.unsplash.com/search/photos");
+      api.searchParams.set("client_id", key);
+      api.searchParams.set("query", q);
+      api.searchParams.set("per_page", "1");
+      api.searchParams.set("content_filter", "high");
+      api.searchParams.set("orientation", "landscape");
+      const r = await fetch(api, { cache: "no-store" });
+      const j = await r.json();
+      const base = j?.results?.[0]?.urls?.regular || j?.results?.[0]?.urls?.full || null;
+      if (base) {
+        const u = new URL(base);
+        u.searchParams.set("w", "600");
+        u.searchParams.set("h", "400");
+        u.searchParams.set("fit", "crop");
+        u.searchParams.set("q", "80");
+        return u.toString();
+      }
+    }
+  } catch {}
+  // Fallback to Unsplash Source (reliable CDN)
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(q)}`;
 }
 
 
