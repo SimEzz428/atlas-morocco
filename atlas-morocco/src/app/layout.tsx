@@ -8,6 +8,8 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import { ToastProvider } from "@/components/ToastProvider";
 import { PlanProvider } from "@/features/plan/PlanProvider";
 import { SessionProvider } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -86,7 +88,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Get session safely with error handling
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("Failed to get session in layout:", error);
+    // Continue without session - client-side will handle auth
+  }
+  
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <head>
@@ -97,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
               <body className="min-h-screen bg-white text-slate-900 antialiased">
-                <SessionProvider>
+                <SessionProvider session={session}>
                   <ToastProvider>
                     <PlanProvider>
                       <div className="flex flex-col min-h-screen">
