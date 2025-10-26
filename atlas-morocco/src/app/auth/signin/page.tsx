@@ -31,14 +31,10 @@ export default function SignInPage() {
         redirect: false,
       });
 
-      if (result?.error) {
+      if (!result || result.error || result.ok === false) {
         setError("Invalid email or password");
       } else {
-        
-        const session = await getSession();
-        if (session) {
-          router.push("/plan");
-        }
+        router.push("/plan");
       }
     } catch (error) {
       setError("An error occurred. Please try again.");
