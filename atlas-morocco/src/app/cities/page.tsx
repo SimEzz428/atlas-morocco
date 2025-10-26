@@ -35,7 +35,7 @@ async function getCityImage(cityName: string) {
   try {
     const response = await fetch(
       absUrl(`/api/unsplash?q=${encodeURIComponent(cityName)} morocco&per_page=1&w=600&h=400`),
-      { next: { revalidate: 3600 } }
+      { cache: "no-store" }
     );
     const data = await response.json();
     return data.images?.[0]?.src || null;

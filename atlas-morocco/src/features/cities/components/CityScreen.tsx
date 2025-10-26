@@ -117,7 +117,7 @@ async function getCityHeroImage(cityName: string) {
     }
 
     const response = await fetch(absUrl(`/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=1&w=2560&h=1440`), {
-      next: { revalidate: 86400 } // Cache for 24 hours
+      cache: "no-store"
     });
 
     if (!response.ok) {
