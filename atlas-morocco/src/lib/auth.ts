@@ -20,9 +20,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        // Find user by email; do NOT auto-create on sign-in
+        // Normalize email and find user case-insensitively; do NOT auto-create on sign-in
+        const email = (credentials.email as string).trim().toLowerCase();
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
+          where: { email },
         });
 
         if (!user) return null;

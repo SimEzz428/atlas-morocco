@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { email, name } = body || {};
+    let { email, name } = body || {};
 
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -15,8 +15,9 @@ export async function POST(req: Request) {
     if (!emailRe.test(email)) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
+    email = email.trim().toLowerCase();
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
     if (existing) {
       return NextResponse.json({ error: "Account already exists" }, { status: 409 });
     }
