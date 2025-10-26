@@ -89,7 +89,14 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
+  // Get session safely with error handling
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("Failed to get session in layout:", error);
+    // Continue without session - client-side will handle auth
+  }
   
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
