@@ -44,9 +44,9 @@ async function getLeaflet() {
     // Fix for default Leaflet icons not showing up
     delete (L.Icon.Default.prototype as any)._getIconUrl;
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl: '/cities/marker-icon-2x.png',
-      iconUrl: '/cities/marker-icon.png',
-      shadowUrl: '/cities/marker-shadow.png',
+      iconRetinaUrl: '/marker-icon-2x.png',
+      iconUrl: '/marker-icon.png',
+      shadowUrl: '/marker-shadow.png',
     });
     leafletInstance = L;
     return L;
