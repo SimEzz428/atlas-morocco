@@ -22,17 +22,29 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      
+      // 1) Create account via API (idempotent if already exists)
+      const r = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
+      });
+      if (!r.ok && r.status !== 409) {
+        const j = await r.json().catch(() => ({} as any));
+        throw new Error(j?.error || "Registration failed");
+      }
+
+      // 2) Sign in immediately after registration
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
+        callbackUrl: "/plan",
       });
 
-      if (result?.error) {
-        setError("Failed to create account. Please try again.");
+      if (result && result.ok) {
+        router.push(result.url ?? "/plan");
       } else {
-        router.push("/");
+        setError("Account created, but sign-in failed. Please try again.");
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
