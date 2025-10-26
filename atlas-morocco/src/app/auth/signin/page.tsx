@@ -111,15 +111,6 @@ export default function SignInPage() {
               </Button>
             </form>
 
-            {/* Demo Info */}
-            <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <h3 className="text-sm font-medium text-amber-800 mb-2">Demo Account</h3>
-              <p className="text-sm text-amber-700">
-                For demo purposes, you can use any email and password combination. 
-                Your account will be created automatically.
-              </p>
-            </div>
-
             {/* Sign Up Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-600">
