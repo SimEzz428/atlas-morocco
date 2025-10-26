@@ -33,12 +33,17 @@ export default function SignUpPage() {
         throw new Error(j?.error || "Registration failed");
       }
 
-      // 2) Sign in immediately after registration
+      // 2) Get CSRF token for sign-in
+      const csrfResponse = await fetch("/api/auth/csrf");
+      const { csrfToken } = await csrfResponse.json();
+
+      // 3) Sign in immediately after registration
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
         callbackUrl: "/plan",
+        csrfToken,
       });
 
       if (result && result.ok) {
