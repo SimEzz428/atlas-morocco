@@ -32,11 +32,10 @@ async function getCities() {
 }
 
 async function getCityImage(cityName: string) {
-  // Use Unsplash Source to avoid server/API coupling in previews
-  const w = 600;
-  const h = 400;
-  const q = encodeURIComponent(`${cityName} morocco`);
-  return `https://source.unsplash.com/${w}x${h}/?${q}`;
+  const slug = cityName.toLowerCase().normalize("NFKD").replace(/[^a-z]+/g, "");
+  // Prefer local curated hero if available
+  const local = `/cities/${slug}/gallery/${slug}-hero.jpg`;
+  return local;
 }
 
 

@@ -116,10 +116,8 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const w = 2560;
-    const h = 1440;
-    const q = encodeURIComponent(searchQuery);
-    const imageUrl = `https://source.unsplash.com/${w}x${h}/?${q}`;
+    const slug = cityName.toLowerCase().normalize("NFKD").replace(/[^a-z]+/g, "");
+    const imageUrl = `/cities/${slug}/gallery/${slug}-hero.jpg`;
     console.log(`Getting hero image for ${cityName}:`, imageUrl ? 'Found' : 'Not found');
     return imageUrl;
   } catch (error) {

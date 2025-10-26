@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { readdir } from "fs/promises";
+import path from "path";
 
 function normalizeQ(q: string) {
   
@@ -13,10 +15,43 @@ export async function GET(req: Request) {
   const width = url.searchParams.get("w") || "800";
   const height = url.searchParams.get("h") || "600";
 
+  // If the query looks like a city name, serve local images from public/ first to avoid remote failures
+  const cityGuess = (q || "").toLowerCase().split(" ")[0];
+  try {
+    const localDir = path.join(process.cwd() as string, "public", "cities", cityGuess as string, "gallery");
+    const files = await readdir(localDir);
+    const picks = files
+      .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
+      .slice(0, perPage)
+      .map((f) => ({
+        id: `local-${cityGuess}-${f}`,
+        src: `/cities/${cityGuess}/gallery/${f}`,
+        link: `/cities/${cityGuess}`,
+        alt: `${q}`,
+        photographer: undefined,
+        width: parseInt(width),
+        height: parseInt(height),
+      }));
+    if (picks.length) {
+      return NextResponse.json({ images: picks }, { status: 200 });
+    }
+  } catch {
+    // ignore and fall back to remote
+  }
+
   const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
   if (!key) {
-    console.log("No Unsplash API key found");
-    return NextResponse.json({ images: [] }, { status: 200 });
+    console.log("No Unsplash API key found — using source.unsplash.com fallback");
+    const fallback = [{
+      id: `fallback-${encodeURIComponent(q)}`,
+      src: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      link: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      alt: q,
+      photographer: undefined,
+      width: parseInt(width),
+      height: parseInt(height),
+    }];
+    return NextResponse.json({ images: fallback }, { status: 200 });
   }
 
   try {
@@ -40,7 +75,16 @@ export async function GET(req: Request) {
     
     if (!r.ok) {
       console.error("Unsplash API error:", r.status, r.statusText);
-      return NextResponse.json({ images: [] }, { status: 200 });
+      const fallback = [{
+        id: `fallback-${encodeURIComponent(q)}`,
+        src: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+        link: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+        alt: q,
+        photographer: undefined,
+        width: parseInt(width),
+        height: parseInt(height),
+      }];
+      return NextResponse.json({ images: fallback }, { status: 200 });
     }
 
     const responseText = await r.text();
@@ -52,7 +96,16 @@ export async function GET(req: Request) {
     } catch (parseError) {
       console.error("Failed to parse Unsplash API response as JSON:", parseError);
       console.error("Response text:", responseText);
-      return NextResponse.json({ images: [] }, { status: 200 });
+      const fallback = [{
+        id: `fallback-${encodeURIComponent(q)}`,
+        src: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+        link: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+        alt: q,
+        photographer: undefined,
+        width: parseInt(width),
+        height: parseInt(height),
+      }];
+      return NextResponse.json({ images: fallback }, { status: 200 });
     }
 
     const images = (json?.results ?? []).map((x: any) => {
@@ -81,10 +134,29 @@ export async function GET(req: Request) {
       };
     });
 
-    console.log(`Found ${images.length} images for query: ${q}`);
-    return NextResponse.json({ images });
+    const list = images.length > 0 ? images : [{
+      id: `fallback-${encodeURIComponent(q)}`,
+      src: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      link: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      alt: q,
+      photographer: undefined,
+      width: parseInt(width),
+      height: parseInt(height),
+    }];
+
+    console.log(`Found ${images.length} images for query: ${q}. Using ${list.length} results`);
+    return NextResponse.json({ images: list });
   } catch (error) {
     console.error("Unsplash API fetch error:", error);
-    return NextResponse.json({ images: [] }, { status: 200 });
+    const fallback = [{
+      id: `fallback-${encodeURIComponent(q)}`,
+      src: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      link: `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(q)}`,
+      alt: q,
+      photographer: undefined,
+      width: parseInt(width),
+      height: parseInt(height),
+    }];
+    return NextResponse.json({ images: fallback }, { status: 200 });
   }
 }
