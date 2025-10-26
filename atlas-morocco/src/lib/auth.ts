@@ -9,7 +9,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === "production",
   debug: process.env.NODE_ENV === "development",
-  skipCSRFCheck: true,
+  skipCSRFCheck: process.env.NODE_ENV === "development",
   experimental: {
     enableWebAuthn: false,
   },
