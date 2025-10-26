@@ -1,12 +1,5 @@
-import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ServiceWorker from "@/components/ServiceWorker";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
-import { ToastProvider } from "@/components/ToastProvider";
-import { PlanProvider } from "@/features/plan/PlanProvider";
 
 const inter = Inter({ 
   subsets: ["latin"], 
