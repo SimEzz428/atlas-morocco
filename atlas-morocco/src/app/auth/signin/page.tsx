@@ -32,17 +32,12 @@ export default function SignInPage() {
     setIsLoading(true);
 
     try {
-      // Get CSRF token for sign-in
-      const csrfResponse = await fetch("/api/auth/csrf");
-      const { csrfToken } = await csrfResponse.json();
-
       // prevent NextAuth from redirecting to /api/auth/error on failure
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
         callbackUrl: "/plan",
-        csrfToken,
       });
 
       if (result && result.ok) {
