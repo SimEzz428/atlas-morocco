@@ -22,37 +22,23 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      // 1) Create account via API (idempotent if already exists)
+      // Create account via API
       const r = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name, password }),
       });
+      
       if (!r.ok && r.status !== 409) {
         const j = await r.json().catch(() => ({} as any));
         throw new Error(j?.error || "Registration failed");
       }
 
-      // 2) Get CSRF token for sign-in
-      const csrfResponse = await fetch("/api/auth/csrf");
-      const { csrfToken } = await csrfResponse.json();
-
-      // 3) Sign in immediately after registration
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl: "/plan",
-        csrfToken,
-      });
-
-      if (result && result.ok) {
-        router.push(result.url ?? "/plan");
-      } else {
-        setError("Account created, but sign-in failed. Please try again.");
-      }
+      // Redirect to sign-in page with success message
+      router.push("/auth/signin?message=Account created successfully! Please sign in.");
     } catch (error) {
-      setError("An unexpected error occurred. Please try again.");
+      console.error("Sign-up error:", error);
+      setError(error instanceof Error ? error.message : "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }

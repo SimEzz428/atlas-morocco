@@ -16,10 +16,15 @@ export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Persist error if present in URL (e.g., from middleware)
+  // Persist error or success message if present in URL
   useEffect(() => {
     const err = searchParams?.get("error");
-    if (err) setError("Incorrect email or password. Please try again.");
+    const message = searchParams?.get("message");
+    if (err) {
+      setError("Incorrect email or password. Please try again.");
+    } else if (message) {
+      setError(message); // We'll use the error state to show success message
+    }
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,7 +77,11 @@ export default function SignInPage() {
           <div className="card-pad">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className={`px-4 py-3 rounded-lg ${
+                  error.includes("successfully") 
+                    ? "bg-green-50 border border-green-200 text-green-700" 
+                    : "bg-red-50 border border-red-200 text-red-700"
+                }`}>
                   {error}
                 </div>
               )}
