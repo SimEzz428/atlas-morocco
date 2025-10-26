@@ -1,24 +1,13 @@
 // src/lib/auth.ts
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  useSecureCookies: process.env.NODE_ENV === "production",
-  debug: process.env.NODE_ENV === "development",
-  skipCSRFCheck: process.env.NODE_ENV === "development",
-  experimental: {
-    enableWebAuthn: false,
-  },
-  session: {
-    strategy: "jwt",
-  },
+export default NextAuth({
   providers: [
-    // Demo credentials provider
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -54,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     
     // Google provider (optional, behind env)
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
-      Google({
+      GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       })
@@ -102,6 +91,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/auth/signin",
     error: "/auth/signin",
+  },
+  
+  session: {
+    strategy: "jwt",
   },
   
   secret: process.env.NEXTAUTH_SECRET || "your-secret-key",
