@@ -43,7 +43,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "credentials") {
+        // block sign-in if user doesn't exist (authorize already ensures this)
+        if (!user?.email) return false;
+      } else if (account?.provider === "google") {
         // Handle Google sign-in
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email! }
@@ -78,6 +81,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   
   pages: {
     signIn: "/auth/signin",
+    // keep error page unset to avoid redirects; client handles inline errors
   },
   
   session: {
