@@ -5,6 +5,9 @@ export interface CityImage {
   height: number;
 }
 
+import { readdir } from 'fs/promises';
+import path from 'path';
+
 // Unsplash API configuration
 const UNSPLASH_API_KEY = process.env.UNSPLASH_ACCESS_KEY || 'rBZJrNW6PHBY4bD77v5QnoYRoMEejxakzyyHOYduLnk';
 const UNSPLASH_BASE_URL = 'https://api.unsplash.com';
@@ -328,6 +331,26 @@ async function fetchUnsplashImages(query: string, limit: number = 12): Promise<C
 
 // Get city images with caching and fallback
 export async function getCityImages(citySlug: string, limit: number = 12): Promise<CityImage[]> {
+  // 0) Prefer local curated images from public/cities/<slug>/gallery
+  try {
+    const localDir = path.join(process.cwd(), 'public', 'cities', citySlug, 'gallery');
+    const files = await readdir(localDir);
+    const locals: CityImage[] = files
+      .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
+      .slice(0, limit)
+      .map((f) => ({
+        url: `/cities/${citySlug}/gallery/${f}`,
+        alt: `${citySlug} photo`,
+        width: 800,
+        height: 600,
+      }));
+    if (locals.length) {
+      return locals;
+    }
+  } catch {
+    // ignore, fall back to remote/constant logic
+  }
+
   // Check cache first
   const cached = imageCache.get(citySlug);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
