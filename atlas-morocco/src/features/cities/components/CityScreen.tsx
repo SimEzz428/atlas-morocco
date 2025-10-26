@@ -31,7 +31,6 @@ import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
 import { City } from "@/server/db";
 import { CityTabContent } from "@/components/CityTabContent";
-import { absUrl } from "@/lib/abs-url";
 
 type Place = {
   id: string;
@@ -88,7 +87,7 @@ function GalleryGrid({ cityName }: { cityName: string }) {
 }
 
 async function getCityHeroImage(cityName: string) {
-  // Call our Unsplash API to get a high-quality image for the city
+  // Get a high-quality hero image for the city via Unsplash
   try {
     // Use more specific search terms for better city representation
     let searchQuery = cityName + ' morocco';
@@ -116,10 +115,30 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const params = new URLSearchParams({ q: searchQuery, per_page: "1", w: "2560", h: "1440" });
-    const res = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
-    const json = await res.json();
-    const imageUrl = json?.images?.[0]?.src || `/placeholder-morocco.jpg`;
+    const key = process.env.UNSPLASH_ACCESS_KEY || process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+    let imageUrl: string | null = null;
+    if (key) {
+      const api = new URL("https://api.unsplash.com/search/photos");
+      api.searchParams.set("client_id", key);
+      api.searchParams.set("query", searchQuery);
+      api.searchParams.set("per_page", "1");
+      api.searchParams.set("content_filter", "high");
+      api.searchParams.set("orientation", "landscape");
+      const r = await fetch(api, { cache: "no-store" });
+      const j = await r.json();
+      const base = j?.results?.[0]?.urls?.regular || j?.results?.[0]?.urls?.full || null;
+      if (base) {
+        const u = new URL(base);
+        u.searchParams.set("w", "2560");
+        u.searchParams.set("h", "1440");
+        u.searchParams.set("fit", "crop");
+        u.searchParams.set("q", "80");
+        imageUrl = u.toString();
+      }
+    }
+    if (!imageUrl) {
+      imageUrl = `https://source.unsplash.com/2560x1440/?${encodeURIComponent(searchQuery)}`;
+    }
     console.log(`Getting hero image for ${cityName}:`, imageUrl ? 'Found' : 'Not found');
     return imageUrl;
   } catch (error) {
