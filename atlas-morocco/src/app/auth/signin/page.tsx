@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -14,12 +14,17 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Persist error if present in URL (e.g., from middleware)
+  useEffect(() => {
+    const err = searchParams?.get("error");
+    if (err) setError("Incorrect email or password. Please try again.");
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // clear any prior error on submit
-    setError("");
 
     try {
       // prevent NextAuth from redirecting to /api/auth/error on failure
@@ -71,14 +76,14 @@ export default function SignInPage() {
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
                   Email address
                 </label>
-                <input
+                  <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (error) setError(""); }}
                   className="input"
                   placeholder="Enter your email"
                 />
@@ -88,14 +93,14 @@ export default function SignInPage() {
                 <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
                   Password
                 </label>
-                <input
+                  <input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="current-password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); if (error) setError(""); }}
                   className="input"
                   placeholder="Enter your password"
                 />
