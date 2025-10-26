@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -62,7 +62,7 @@ export const authOptions = {
   },
   
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   
   secret: process.env.NEXTAUTH_SECRET,
