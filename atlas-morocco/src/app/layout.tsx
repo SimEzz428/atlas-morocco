@@ -8,8 +8,7 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import { ToastProvider } from "@/components/ToastProvider";
 import { PlanProvider } from "@/features/plan/PlanProvider";
 import { SessionProvider } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -89,7 +88,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>

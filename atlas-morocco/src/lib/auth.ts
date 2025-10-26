@@ -1,23 +1,11 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
-// Extend the built-in session types
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
-  }
-}
-
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -74,12 +62,10 @@ export const authOptions: NextAuthOptions = {
   },
   
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt",
   },
   
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
-  useSecureCookies: process.env.NODE_ENV === "production",
-};
-
-export default NextAuth(authOptions);
+  trustHost: true,
+});
