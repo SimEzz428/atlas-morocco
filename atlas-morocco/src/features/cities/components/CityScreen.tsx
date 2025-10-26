@@ -116,9 +116,8 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const response = await fetch(absUrl(`/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=1&w=2560&h=1440`), {
-      cache: "no-store"
-    });
+    const params = new URLSearchParams({ q: searchQuery, per_page: "1", w: "2560", h: "1440" });
+    const response = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
 
     if (!response.ok) {
       console.error(`Failed to fetch image for ${cityName}`);
