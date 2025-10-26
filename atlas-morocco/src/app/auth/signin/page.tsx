@@ -22,14 +22,18 @@ export default function SignInPage() {
     setError("");
 
     try {
+      // prevent NextAuth from redirecting to /api/auth/error on failure
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
+        callbackUrl: "/plan",
       });
 
       if (!result || result.error || result.ok === false || result.status === 401) {
         setError("Invalid email or password");
+      } else if (result?.url) {
+        router.push(result.url);
       } else {
         router.push("/plan");
       }
