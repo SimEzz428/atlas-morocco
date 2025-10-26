@@ -28,8 +28,26 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Temporarily disable database auth to isolate the issue
-        return null;
+        try {
+          const email = (credentials.email as string).trim().toLowerCase();
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
+
+          if (!user || !user.passwordHash) {
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(credentials.password as string, user.passwordHash);
+          if (!isValid) {
+            return null;
+          }
+          
+          return { id: user.id, email: user.email, name: user.name };
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
+        }
       }
     }),
   ],
