@@ -146,6 +146,7 @@ export default function CitySearch({ cities }: CitySearchProps) {
                     alt={`${city.name} cityscape`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">

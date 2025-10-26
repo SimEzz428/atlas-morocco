@@ -15,11 +15,22 @@ const featuredCities = [
   { name: "Rabat", slug: "rabat", description: "Elegant capital with royal heritage" },
 ];
 
-async function getCityImage(cityName: string) {
-  const w = 600;
-  const h = 400;
-  const q = encodeURIComponent(`${cityName} morocco`);
-  return `https://source.unsplash.com/${w}x${h}/?${q}`;
+const HERO_FILE: Record<string, string> = {
+  marrakech: 'koutoubia-mosque.jpg',
+  fes: 'tanneries.jpg',
+  essaouira: 'port.jpg',
+  casablanca: 'hassan-ii-mosque.jpg',
+  chefchaouen: 'blue-streets.jpg',
+  rabat: 'hassan-tower.jpg',
+  tangier: 'kasbah.jpg',
+  agadir: 'beach.jpg',
+  meknes: 'bab-mansour.jpg',
+  ouarzazate: 'ait-ben-haddou.jpg',
+};
+
+async function getCityImage(slug: string) {
+  const file = HERO_FILE[slug] || 'medina.jpg';
+  return `/cities/${slug}/gallery/${file}`;
 }
 
 export default async function HomePage() {
@@ -27,7 +38,7 @@ export default async function HomePage() {
   const cityImages = await Promise.all(
     featuredCities.map(async (city) => ({
       ...city,
-      image: await getCityImage(city.name)
+      image: await getCityImage(city.slug)
     }))
   );
 
