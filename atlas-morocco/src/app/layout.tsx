@@ -5,9 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ServiceWorker from "@/components/ServiceWorker";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
-import { ToastProvider } from "@/components/ToastProvider";
-import { PlanProvider } from "@/features/plan/PlanProvider";
-import { SessionProvider } from "next-auth/react";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -97,21 +95,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
               <body className="min-h-screen bg-white text-slate-900 antialiased">
-                <SessionProvider>
-                  <ToastProvider>
-                    <PlanProvider>
-                      <div className="flex flex-col min-h-screen">
-                        <Navbar />
-                        <main className="flex-1">
-                          {children}
-                        </main>
-                        <Footer />
-                      </div>
-                      <ServiceWorker />
-                      <PerformanceMonitor />
-                    </PlanProvider>
-                  </ToastProvider>
-                </SessionProvider>
+                <Providers>
+                  <div className="flex flex-col min-h-screen">
+                    <Navbar />
+                    <main className="flex-1">
+                      {children}
+                    </main>
+                    <Footer />
+                  </div>
+                  <ServiceWorker />
+                  <PerformanceMonitor />
+                </Providers>
               </body>
     </html>
   );
