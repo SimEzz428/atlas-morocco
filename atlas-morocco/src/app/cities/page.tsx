@@ -12,6 +12,7 @@ import {
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
 import CitySearch from "@/components/CitySearch";
+import { absUrl } from "@/lib/abs-url";
 
 
 async function getCities() {
@@ -33,7 +34,7 @@ async function getCities() {
 async function getCityImage(cityName: string) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/unsplash?q=${encodeURIComponent(cityName)} morocco&per_page=1&w=600&h=400`,
+      absUrl(`/api/unsplash?q=${encodeURIComponent(cityName)} morocco&per_page=1&w=600&h=400`),
       { next: { revalidate: 3600 } }
     );
     const data = await response.json();

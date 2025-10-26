@@ -31,6 +31,7 @@ import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
 import { City } from "@/server/db";
 import { CityTabContent } from "@/components/CityTabContent";
+import { absUrl } from "@/lib/abs-url";
 
 type Place = {
   id: string;
@@ -115,7 +116,7 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const response = await fetch(`http://localhost:3000/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=1&w=2560&h=1440`, {
+    const response = await fetch(absUrl(`/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=1&w=2560&h=1440`), {
       next: { revalidate: 86400 } // Cache for 24 hours
     });
 
