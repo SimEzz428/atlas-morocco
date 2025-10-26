@@ -32,10 +32,15 @@ async function getCities() {
 }
 
 async function getCityImage(cityName: string) {
-  const slug = cityName.toLowerCase().normalize("NFKD").replace(/[^a-z]+/g, "");
-  // Prefer local curated hero if available
-  const local = `/cities/${slug}/gallery/${slug}-hero.jpg`;
-  return local;
+  const params = new URLSearchParams({
+    q: `${cityName} morocco`,
+    per_page: "1",
+    w: "600",
+    h: "400",
+  });
+  const r = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
+  const j = await r.json();
+  return j?.images?.[0]?.src || `/placeholder-morocco.jpg`;
 }
 
 

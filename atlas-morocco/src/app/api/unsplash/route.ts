@@ -15,29 +15,7 @@ export async function GET(req: Request) {
   const width = url.searchParams.get("w") || "800";
   const height = url.searchParams.get("h") || "600";
 
-  // If the query looks like a city name, serve local images from public/ first to avoid remote failures
-  const cityGuess = (q || "").toLowerCase().split(" ")[0];
-  try {
-    const localDir = path.join(process.cwd() as string, "public", "cities", cityGuess as string, "gallery");
-    const files = await readdir(localDir);
-    const picks = files
-      .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
-      .slice(0, perPage)
-      .map((f) => ({
-        id: `local-${cityGuess}-${f}`,
-        src: `/cities/${cityGuess}/gallery/${f}`,
-        link: `/cities/${cityGuess}`,
-        alt: `${q}`,
-        photographer: undefined,
-        width: parseInt(width),
-        height: parseInt(height),
-      }));
-    if (picks.length) {
-      return NextResponse.json({ images: picks }, { status: 200 });
-    }
-  } catch {
-    // ignore and fall back to remote
-  }
+  // Always use Unsplash for this route per requirement
 
   const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
   if (!key) {

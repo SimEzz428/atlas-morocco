@@ -116,8 +116,10 @@ async function getCityHeroImage(cityName: string) {
       searchQuery = 'Ouarzazate Morocco kasbah';
     }
 
-    const slug = cityName.toLowerCase().normalize("NFKD").replace(/[^a-z]+/g, "");
-    const imageUrl = `/cities/${slug}/gallery/${slug}-hero.jpg`;
+    const params = new URLSearchParams({ q: searchQuery, per_page: "1", w: "2560", h: "1440" });
+    const res = await fetch(absUrl(`/api/unsplash?${params.toString()}`), { cache: "no-store" });
+    const json = await res.json();
+    const imageUrl = json?.images?.[0]?.src || `/placeholder-morocco.jpg`;
     console.log(`Getting hero image for ${cityName}:`, imageUrl ? 'Found' : 'Not found');
     return imageUrl;
   } catch (error) {
