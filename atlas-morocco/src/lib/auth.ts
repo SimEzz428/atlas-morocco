@@ -1,7 +1,5 @@
-// src/lib/auth.ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
@@ -18,61 +16,31 @@ export default NextAuth({
           return null;
         }
 
-        // Normalize email and find user case-insensitively; do NOT auto-create on sign-in
-        const email = (credentials.email as string).trim().toLowerCase();
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        try {
+          const email = (credentials.email as string).trim().toLowerCase();
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
 
-        if (!user) return null;
+          if (!user || !user.passwordHash) {
+            return null;
+          }
 
-        // Check if user has a password hash
-        if (!(user as any).passwordHash) {
-          // User exists but has no password hash (created before password system)
-          // Return null to show "incorrect credentials" message
+          const isValid = await bcrypt.compare(credentials.password as string, user.passwordHash);
+          if (!isValid) {
+            return null;
+          }
+          
+          return { id: user.id, email: user.email, name: user.name };
+        } catch (error) {
+          console.error("Auth error:", error);
           return null;
         }
-
-        // Verify password
-        const ok = await bcrypt.compare(credentials.password as string, (user as any).passwordHash as string);
-        if (!ok) return null;
-        
-        return { id: user.id, email: user.email, name: user.name };
       }
     }),
-    
-    // Google provider (optional, behind env)
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
-      GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      })
-    ] : []),
   ],
   
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === "credentials") {
-        // block sign-in if user doesn't exist (authorize already ensures this)
-        if (!user?.email) return false;
-      } else if (account?.provider === "google") {
-        // Handle Google sign-in
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email! }
-        });
-
-        if (!existingUser) {
-          await prisma.user.create({
-            data: {
-              email: user.email!,
-              name: user.name,
-            }
-          });
-        }
-      }
-      return true;
-    },
-    
     async session({ session, token }) {
       if (token.sub) {
         session.user.id = token.sub;
@@ -97,5 +65,6 @@ export default NextAuth({
     strategy: "jwt",
   },
   
-  secret: process.env.NEXTAUTH_SECRET || "your-secret-key",
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 });
