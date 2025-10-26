@@ -28,8 +28,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user) return null;
 
-        // NOTE: No password hash stored yet; treat any password as invalid check.
-        // Once a password hash column exists, verify here with bcrypt.compare.
+        // Check if user has a password hash
+        if (!(user as any).passwordHash) {
+          // User exists but has no password hash (created before password system)
+          // Return null to show "incorrect credentials" message
+          return null;
+        }
+
+        // Verify password
+        const ok = await bcrypt.compare(credentials.password as string, (user as any).passwordHash as string);
+        if (!ok) return null;
+        
         return { id: user.id, email: user.email, name: user.name };
       }
     }),
