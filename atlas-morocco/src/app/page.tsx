@@ -14,9 +14,9 @@ const featuredCities = [
 ];
 
 function getCityImage(slug: string) {
-  // Verified, high-quality Unsplash photos for each Moroccan city
+  
   const imageMap: Record<string, string> = {
-    marrakech: "https://images.unsplash.com/photo-1545406626-f5842b55863e?w=800&h=600&fit=crop&q=90",
+    marrakech: "https://images.unsplash.com/photo-1677837488142-a85ffbffe408?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2670",
     fes: "https://images.unsplash.com/photo-1545025448-8430cbd24641?w=800&h=600&fit=crop&q=90",
     essaouira: "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=800&h=600&fit=crop&q=90",
     casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=800&h=600&fit=crop&q=90",
