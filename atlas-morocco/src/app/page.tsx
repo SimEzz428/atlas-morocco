@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, MapPin, Calendar, Users, Globe, Compass } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
@@ -15,16 +14,16 @@ const featuredCities = [
 ];
 
 function getCityImage(slug: string) {
-  // Use reliable Unsplash Image IDs for each city
+  // High-quality Unsplash photos for each Moroccan city
   const imageMap: Record<string, string> = {
-    marrakech: "https://images.unsplash.com/photo-1545406626-f5842b55863e?w=600&q=80",
-    fes: "https://images.unsplash.com/photo-1545025448-8430cbd24641?w=600&q=80",
-    essaouira: "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=600&q=80",
-    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=600&q=80",
-    chefchaouen: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&q=80",
-    rabat: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
+    marrakech: "https://images.unsplash.com/photo-1595425970378-cf1098921ab9?w=600&h=400&fit=crop&q=90",
+    fes: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&q=90",
+    essaouira: "https://images.unsplash.com/photo-1519150866-38501275c0c2?w=600&h=400&fit=crop&q=90",
+    casablanca: "https://images.unsplash.com/photo-1524925492324-b6c97b5a923f?w=600&h=400&fit=crop&q=90",
+    chefchaouen: "https://images.unsplash.com/photo-1516096693235-7bb06277c386?w=600&h=400&fit=crop&q=90",
+    rabat: "https://images.unsplash.com/photo-1593115136027-77802a12aaa1?w=600&h=400&fit=crop&q=90"
   };
-  return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&q=80`;
+  return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&h=400&fit=crop&q=90`;
 }
 
 export default function HomePage() {
@@ -39,11 +38,11 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1920&q=80"
-            alt="Morocco landscape"
+            src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1920&q=90"
+            alt="Morocco desert landscape"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
         </div>
         
         <div className="relative z-10 container-pro text-center">
@@ -89,13 +88,10 @@ export default function HomePage() {
           {cityImages.map((city) => (
             <Card key={city.slug} className="group hover:shadow-xl transition-all duration-300">
               <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <Image
+                <img
                   src={city.image}
                   alt={`${city.name}, Morocco`}
-                  width={600}
-                  height={400}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
