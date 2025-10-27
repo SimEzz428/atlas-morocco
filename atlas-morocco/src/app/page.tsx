@@ -16,12 +16,12 @@ const featuredCities = [
 function getCityImage(slug: string) {
 
   const imageMap: Record<string, string> = {
-    marrakech:  "https://images.unsplash.com/photo-1677837488142-a85ffbffe408?w=800&h=600&fit=crop&q=85&fm=jpg",
-    fes:        "https://images.unsplash.com/photo-1512958789358-4effcbe171a0?w=800&h=600&fit=crop&q=85&fm=jpg",
-    essaouira:  "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=800&h=600&fit=crop&q=85&fm=jpg",
-    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=800&h=600&fit=crop&q=85&fm=jpg",
-    chefchaouen:"https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop&q=85&fm=jpg",
-    rabat:      "https://images.unsplash.com/photo-1586399956071-b81702d261d9?w=800&h=600&fit=crop&q=85&fm=jpg",
+    marrakech:  "https://images.unsplash.com/photo-1624805098931-098c0d918b34?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxNYXJyYWtlY2glMjBtb3JvY2NvfGVufDF8MHx8fDE3NjE1Mjg2MTV8MA&ixlib=rb-4.1.0&q=80&w=600&h=400",
+    fes:        "https://images.unsplash.com/photo-1528657305805-d8d56cee1785?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxGJUMzJUE4cyUyMG1vcm9jY298ZW58MXwwfHx8MTc2MTQ5Mzc0MHww&ixlib=rb-4.1.0&q=80&w=600&h=400",
+    essaouira:  "https://images.unsplash.com/photo-1668335554961-4f9c1ec5cec9?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxFc3Nhb3VpcmElMjBtb3JvY2NvfGVufDF8MHx8fDE3NjE0OTM3NDB8MA&ixlib=rb-4.1.0&q=80&w=600&h=400",
+    casablanca: "https://images.unsplash.com/photo-1538230575309-59dfc388ae36?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxDYXNhYmxhbmNhJTIwbW9yb2Njb3xlbnwxfDB8fHwxNzYxNTI4NjE1fDA&ixlib=rb-4.1.0&q=80&w=600&h=400",
+    chefchaouen:"https://images.unsplash.com/photo-1569383746724-6f1b882b8f46?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxDaGVmY2hhb3VlbiUyMG1vcm9jY298ZW58MXwwfHx8MTc2MTUyODYxNXww&ixlib=rb-4.1.0&q=80&w=600&h=400",
+    rabat:      "https://images.unsplash.com/photo-1671471122995-b27ba131195b?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&ixid=M3w4MjA2ODN8MHwxfHNlYXJjaHwxfHxSYWJhdCUyMG1vcm9jY298ZW58MXwwfHx8MTc2MTUyODYxNXww&ixlib=rb-4.1.0&q=80&w=600&h=400",
   };
   return imageMap[slug] || `https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2667`;
 }
