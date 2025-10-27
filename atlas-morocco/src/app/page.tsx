@@ -16,12 +16,12 @@ const featuredCities = [
 function getCityImage(slug: string) {
 
   const imageMap: Record<string, string> = {
-    marrakech: "https://images.unsplash.com/photo-1677837488142-a85ffbffe408?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2670",
-    fes: "https://images.unsplash.com/photo-1512958789358-4effcbe171a0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2670",
-    essaouira: "https://images.unsplash.com/photo-1737210237016-e0254dff92f6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1287",
-    casablanca: "https://plus.unsplash.com/premium_photo-1697729726646-c01faa307c41?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1284",
-    chefchaouen: "https://images.unsplash.com/photo-1639646299675-c68c0366897e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2670",
-    rabat: "https://images.unsplash.com/photo-1591606968395-e9561e379def?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2274"
+    marrakech:  "https://images.unsplash.com/photo-1677837488142-a85ffbffe408?w=800&h=600&fit=crop&q=85&fm=jpg",
+    fes:        "https://images.unsplash.com/photo-1512958789358-4effcbe171a0?w=800&h=600&fit=crop&q=85&fm=jpg",
+    essaouira:  "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=800&h=600&fit=crop&q=85&fm=jpg",
+    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=800&h=600&fit=crop&q=85&fm=jpg",
+    chefchaouen:"https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop&q=85&fm=jpg",
+    rabat:      "https://images.unsplash.com/photo-1586399956071-b81702d261d9?w=800&h=600&fit=crop&q=85&fm=jpg",
   };
   return imageMap[slug] || `https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2667`;
 }
