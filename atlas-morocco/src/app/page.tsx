@@ -15,9 +15,16 @@ const featuredCities = [
 ];
 
 function getCityImage(slug: string) {
-  // Use simple Unsplash source URLs for server-side rendering
-  const q = `${slug} morocco`;
-  return `https://source.unsplash.com/600x400/?${encodeURIComponent(q)}`;
+  // Use reliable Unsplash Image IDs for each city
+  const imageMap: Record<string, string> = {
+    marrakech: "https://images.unsplash.com/photo-1545406626-f5842b55863e?w=600&q=80",
+    fes: "https://images.unsplash.com/photo-1545025448-8430cbd24641?w=600&q=80",
+    essaouira: "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=600&q=80",
+    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=600&q=80",
+    chefchaouen: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&q=80",
+    rabat: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
+  };
+  return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&q=80`;
 }
 
 export default function HomePage() {
@@ -30,15 +37,21 @@ export default function HomePage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50"></div>
-        <div className="absolute inset-0 bg-[url('/hero-pattern.svg')] opacity-5"></div>
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1920&q=80"
+            alt="Morocco landscape"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
         
         <div className="relative z-10 container-pro text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="h1 mb-6 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 bg-clip-text text-transparent">
+            <h1 className="h1 mb-6 text-white">
               Discover Morocco's Hidden Gems
             </h1>
-            <p className="lead mb-8 text-slate-700">
+            <p className="lead mb-8 text-white/90">
               Plan unforgettable journeys through Morocco's most enchanting cities. 
               From the bustling souks of Marrakech to the blue streets of Chefchaouen, 
               create memories that last a lifetime.
@@ -76,10 +89,13 @@ export default function HomePage() {
           {cityImages.map((city) => (
             <Card key={city.slug} className="group hover:shadow-xl transition-all duration-300">
               <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <img
+                <Image
                   src={city.image}
                   alt={`${city.name}, Morocco`}
+                  width={600}
+                  height={400}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
