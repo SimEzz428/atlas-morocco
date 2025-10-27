@@ -14,16 +14,16 @@ const featuredCities = [
 ];
 
 function getCityImage(slug: string) {
-  // High-quality Unsplash photos for each Moroccan city
+  // Beautiful city-specific Unsplash photos for each Moroccan destination
   const imageMap: Record<string, string> = {
-    marrakech: "https://images.unsplash.com/photo-1595425970378-cf1098921ab9?w=600&h=400&fit=crop&q=90",
-    fes: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&q=90",
-    essaouira: "https://images.unsplash.com/photo-1519150866-38501275c0c2?w=600&h=400&fit=crop&q=90",
-    casablanca: "https://images.unsplash.com/photo-1524925492324-b6c97b5a923f?w=600&h=400&fit=crop&q=90",
-    chefchaouen: "https://images.unsplash.com/photo-1516096693235-7bb06277c386?w=600&h=400&fit=crop&q=90",
-    rabat: "https://images.unsplash.com/photo-1593115136027-77802a12aaa1?w=600&h=400&fit=crop&q=90"
+    marrakech: "https://images.unsplash.com/photo-1545406626-f5842b55863e?w=800&q=90",
+    fes: "https://images.unsplash.com/photo-1545025448-8430cbd24641?w=800&q=90",
+    essaouira: "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=800&q=90",
+    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=800&q=90",
+    chefchaouen: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&q=90",
+    rabat: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&q=90"
   };
-  return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&h=400&fit=crop&q=90`;
+  return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&q=90`;
 }
 
 export default function HomePage() {
@@ -38,11 +38,11 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1920&q=90"
-            alt="Morocco desert landscape"
+            src="https://images.unsplash.com/photo-1590736969955-71cc94901144?w=2560&h=1440&fit=crop&q=90"
+            alt="Beautiful Morocco landscape"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </div>
         
         <div className="relative z-10 container-pro text-center">
@@ -92,6 +92,8 @@ export default function HomePage() {
                   src={city.image}
                   alt={`${city.name}, Morocco`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  crossOrigin="anonymous"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
