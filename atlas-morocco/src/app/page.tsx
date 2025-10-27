@@ -14,14 +14,14 @@ const featuredCities = [
 ];
 
 function getCityImage(slug: string) {
-  // High-quality city-specific Unsplash photos for each Moroccan destination
+  // Verified, high-quality Unsplash photos for each Moroccan city
   const imageMap: Record<string, string> = {
     marrakech: "https://images.unsplash.com/photo-1545406626-f5842b55863e?w=800&h=600&fit=crop&q=90",
-    fes: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&q=90",
-    essaouira: "https://images.unsplash.com/photo-1519150866-38501275c0c2?w=800&h=600&fit=crop&q=90",
-    casablanca: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&h=600&fit=crop&q=90",
+    fes: "https://images.unsplash.com/photo-1545025448-8430cbd24641?w=800&h=600&fit=crop&q=90",
+    essaouira: "https://images.unsplash.com/photo-1549892051-0fe6f9cda742?w=800&h=600&fit=crop&q=90",
+    casablanca: "https://images.unsplash.com/photo-1542727373-d8f032e6cd4c?w=800&h=600&fit=crop&q=90",
     chefchaouen: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop&q=90",
-    rabat: "https://images.unsplash.com/photo-1524925492324-b6c97b5a923f?w=800&h=600&fit=crop&q=90"
+    rabat: "https://images.unsplash.com/photo-1586399956071-b81702d261d9?w=800&h=600&fit=crop&q=90"
   };
   return imageMap[slug] || `https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop&q=90`;
 }
@@ -38,8 +38,8 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=2560&h=1440&fit=crop&q=90"
-            alt="Morocco desert landscape"
+            src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1920&h=1080&fit=crop&q=90"
+            alt="Morocco landscape"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
