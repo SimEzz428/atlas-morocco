@@ -1,6 +1,6 @@
 # Casablanca Gallery Images
 
-This directory should contain 12 high-quality images of Casablanca landmarks and attractions:
+This directory  contain 12 high-quality images of Casablanca landmarks and attractions:
 
 1. hassan-ii-mosque.jpg - Hassan II Mosque
 2. city-center.jpg - Casablanca city center
