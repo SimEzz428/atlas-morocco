@@ -58,7 +58,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <body className="min-h-screen bg-white text-slate-900 antialiased">
+      <body className="min-h-screen antialiased">
         <Providers>
           <div className="flex flex-col min-h-screen">
             <Navbar />

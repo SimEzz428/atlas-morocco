@@ -33,7 +33,7 @@ export default function ProfilePage() {
   if (status !== "authenticated") {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin" aria-label="Loading" />
+        <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" aria-label="Loading" />
       </div>
     );
   }
@@ -43,11 +43,11 @@ export default function ProfilePage() {
   const stats = profile?.stats;
 
   return (
-    <div className="bg-slate-50 min-h-[70vh]">
+    <div className="bg-stone-50 min-h-[70vh]">
       <div className="container-pro py-8">
         <div className="mb-8">
-          <h1 className="h1 text-slate-900">Profile</h1>
-          <p className="text-slate-600">Your account and travel activity</p>
+          <h1 className="h1 text-stone-900">Profile</h1>
+          <p className="text-stone-600">Your account and travel activity</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -61,37 +61,37 @@ export default function ProfilePage() {
 
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center text-2xl font-semibold text-amber-700">
+                    <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center text-2xl font-semibold text-brand-700">
                       {name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">{name}</p>
-                      <p className="text-slate-600">{email}</p>
+                      <p className="font-semibold text-stone-900">{name}</p>
+                      <p className="text-stone-600">{email}</p>
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <span className="block text-sm font-medium text-slate-700 mb-2">Full Name</span>
-                      <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-                        <User className="h-4 w-4 text-slate-400" />
-                        <span className="text-slate-900">{name}</span>
+                      <span className="block text-sm font-medium text-stone-700 mb-2">Full Name</span>
+                      <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
+                        <User className="h-4 w-4 text-stone-400" />
+                        <span className="text-stone-900">{name}</span>
                       </div>
                     </div>
                     <div>
-                      <span className="block text-sm font-medium text-slate-700 mb-2">Email Address</span>
-                      <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-                        <Mail className="h-4 w-4 text-slate-400" />
-                        <span className="text-slate-900 truncate">{email}</span>
+                      <span className="block text-sm font-medium text-stone-700 mb-2">Email Address</span>
+                      <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
+                        <Mail className="h-4 w-4 text-stone-400" />
+                        <span className="text-stone-900 truncate">{email}</span>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <span className="block text-sm font-medium text-slate-700 mb-2">Member Since</span>
-                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-                      <Calendar className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-900">
+                    <span className="block text-sm font-medium text-stone-700 mb-2">Member Since</span>
+                    <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
+                      <Calendar className="h-4 w-4 text-stone-400" />
+                      <span className="text-stone-900">
                         {profile ? new Date(profile.user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "…"}
                       </span>
                     </div>
@@ -113,8 +113,8 @@ export default function ProfilePage() {
                     { label: "Favorite cities", value: stats?.favoriteCount },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex justify-between items-center">
-                      <dt className="text-slate-600">{label}</dt>
-                      <dd className="font-semibold text-slate-900">{value ?? "…"}</dd>
+                      <dt className="text-stone-600">{label}</dt>
+                      <dd className="font-semibold text-stone-900">{value ?? "…"}</dd>
                     </div>
                   ))}
                 </dl>

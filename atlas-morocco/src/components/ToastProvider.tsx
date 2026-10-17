@@ -75,7 +75,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       case 'info':
         return 'bg-blue-50 border-blue-200 text-blue-800';
       default:
-        return 'bg-slate-50 border-slate-200 text-slate-800';
+        return 'bg-stone-50 border-stone-200 text-stone-800';
     }
   };
 

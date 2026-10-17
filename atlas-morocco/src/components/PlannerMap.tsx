@@ -5,31 +5,14 @@ import L from 'leaflet';
 
 interface PlannerMapProps {
   points: Array<{ id: string; lat: number; lon: number; name?: string; category?: string }>;
-  height: number;
+  // Pixel height; fills the parent when omitted.
+  height?: number;
 }
 
 const MOROCCO_CENTER: [number, number] = [31.7, -7.1];
 
-const CATEGORY_COLORS: Record<string, string> = {
-  mosque: '#8B5CF6',
-  market: '#F59E0B',
-  souk: '#F59E0B',
-  palace: '#DC2626',
-  garden: '#10B981',
-  museum: '#3B82F6',
-  restaurant: '#EF4444',
-  cafe: '#F97316',
-  viewpoint: '#06B6D4',
-  view: '#06B6D4',
-  beach: '#0EA5E9',
-  medina: '#7C3AED',
-  food: '#EF4444',
-  architecture: '#374151',
-  culture: '#F59E0B',
-  nature: '#10B981',
-  shopping: '#F59E0B',
-  daytrip: '#8B5CF6',
-};
+// Matches the numbered stop badges in the itinerary (brand-600).
+const MARKER_COLOR = '#B84D28';
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -68,13 +51,12 @@ export default function PlannerMap({ points, height }: PlannerMapProps) {
 
     const latLngs = valid.map((p) => L.latLng(p.lat, p.lon));
     if (latLngs.length > 1) {
-      L.polyline(latLngs, { color: '#C67C2B', weight: 4, opacity: 0.9, dashArray: '8, 12', lineCap: 'round', lineJoin: 'round' }).addTo(layer);
+      L.polyline(latLngs, { color: MARKER_COLOR, weight: 4, opacity: 0.9, dashArray: '8, 12', lineCap: 'round', lineJoin: 'round' }).addTo(layer);
     }
 
     valid.forEach((point, index) => {
-      const color = CATEGORY_COLORS[point.category?.toLowerCase() ?? ''] ?? '#C67C2B';
       const icon = L.divIcon({
-        html: `<div style="width:32px;height:32px;background:${color};color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.25);border:2px solid #fff">${index + 1}</div>`,
+        html: `<div style="width:32px;height:32px;background:${MARKER_COLOR};color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.25);border:2px solid #fff">${index + 1}</div>`,
         className: '',
         iconSize: [32, 32],
         iconAnchor: [16, 16],
@@ -92,5 +74,5 @@ export default function PlannerMap({ points, height }: PlannerMapProps) {
     }
   }, [points]);
 
-  return <div ref={containerRef} style={{ height: `${height}px`, width: '100%' }} />;
+  return <div ref={containerRef} style={{ height: height ? `${height}px` : '100%', width: '100%' }} />;
 }

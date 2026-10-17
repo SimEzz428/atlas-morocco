@@ -3,399 +3,99 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body { 
-  background: #fff; 
-  color: #1e293b; 
-  font-feature-settings: "rlig" 1, "calt" 1;
-  font-variant-numeric: tabular-nums;
-}
-
-
-html {
-  scroll-behavior: smooth;
-}
-
-
-.container-pro { @apply container mx-auto max-w-7xl px-4 sm:px-6; }
-
-
-.card { 
-  @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300; 
-}
-.card:hover {
-  @apply shadow-lg;
-}
-
-
-.kpi {
-  @apply text-2xl font-bold text-slate-900;
-}
-.kpi-label {
-  @apply text-sm font-medium text-slate-600 mb-2;
-}
-.card-pad { @apply p-4 sm:p-6; }
-.card-pad-sm { @apply p-3 sm:p-4; }
-.section { @apply container-pro py-8 sm:py-12; }
-.section-sm { @apply container-pro py-6 sm:py-8; }
-
-
-.h1 { @apply font-display text-4xl sm:text-5xl font-bold tracking-tight text-slate-900; }
-.h2 { @apply font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900; }
-.h3 { @apply font-display text-2xl sm:text-3xl font-semibold text-slate-900; }
-.lead { @apply text-lg sm:text-xl text-slate-600 leading-relaxed; }
-.body { @apply text-base text-slate-700; }
-.caption { @apply text-sm text-slate-500; }
-
-
-.badge { 
-  @apply inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-sm font-medium bg-slate-50 text-slate-700; 
-}
-.badge-brand { 
-  @apply bg-amber-50 text-amber-700 border-amber-200; 
-}
-.badge-accent { 
-  @apply bg-blue-50 text-blue-700 border-blue-200; 
-}
-
-/* Buttons */
-.btn { 
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer; 
-}
-.btn-primary { 
-  @apply btn bg-amber-600 text-white hover:bg-amber-700 hover:-translate-y-0.5 hover:shadow-lg; 
-}
-.btn-secondary { 
-  @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400; 
-}
-.btn-ghost { 
-  @apply btn border border-transparent bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900; 
-}
-.btn-soft { 
-  @apply btn bg-amber-50 text-amber-700 hover:bg-amber-100; 
-}
-.btn-success { 
-  @apply btn bg-green-600 text-white hover:bg-green-700 hover:-translate-y-0.5 hover:shadow-lg; 
-}
-.btn-danger { 
-  @apply btn bg-red-600 text-white hover:bg-red-700 hover:-translate-y-0.5 hover:shadow-lg; 
-}
-.btn-lg { 
-  @apply px-6 py-3 text-base; 
-}
-.btn-sm { 
-  @apply px-3 py-1.5 text-xs; 
-}
-
-/* Input styles */
-.input {
-  @apply w-full px-4 py-3 border border-slate-300 rounded-xl text-base transition-colors focus:border-amber-500 focus:ring-4 focus:ring-amber-100 focus:outline-none;
-}
-.input-lg {
-  @apply px-5 py-4 text-lg;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes slideUp {
-  from { 
-    opacity: 0;
-    transform: translateY(20px);
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
+  body {
+    @apply bg-sand-50 text-stone-800;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  ::selection {
+    @apply bg-brand-200 text-stone-900;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
 
-@keyframes scaleIn {
-  from { 
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to { 
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* Component classes live in the components layer so utility classes (e.g. text-white on a .h1) override them. */
+@layer components {
+  .container-pro { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
+  /* Type scale */
+  .h1 { @apply font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-stone-900; }
+  .h2 { @apply font-display text-2xl sm:text-3xl font-bold tracking-tight text-stone-900; }
+  .h3 { @apply font-display text-xl sm:text-2xl font-semibold text-stone-900; }
+  .h4 { @apply font-display text-lg font-semibold text-stone-900; }
+  .lead { @apply text-base sm:text-lg text-stone-600 leading-relaxed; }
+  .caption { @apply text-sm text-stone-500; }
+  .eyebrow { @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand-700; }
 
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(198, 124, 43, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(198, 124, 43, 0.4); }
-}
+  /* Surfaces */
+  .card { @apply rounded-2xl border border-stone-200/80 bg-white shadow-sm; }
+  .card-pad { @apply p-5 sm:p-6; }
+  .card-pad-sm { @apply p-3 sm:p-4; }
+  .section { @apply container-pro py-12 sm:py-16; }
 
-.animate-slide-in-left {
-  animation: slideInLeft 0.6s ease-out;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.6s ease-out;
-}
-
-.animate-bounce-in {
-  animation: bounceIn 0.8s ease-out;
-}
-
-.animate-stagger > * {
-  animation-delay: calc(var(--stagger-delay, 0) * 0.1s);
-}
-
-.animate-float-slow {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(198, 124, 43, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(198, 124, 43, 0.6);
-  }
-}
-
-/* Gradient utilities */
-.gradient-brand {
-  background: linear-gradient(135deg, #C67C2B 0%, #A0661F 100%);
-}
-
-.gradient-surface {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, #C67C2B 0%, #A0661F 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass morphism */
-.glass {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.glass-dark {
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Hover effects */
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-.hover-glow:hover {
-  box-shadow: 0 10px 25px -3px rgba(198, 124, 43, 0.1), 0 4px 6px -2px rgba(198, 124, 43, 0.05);
-}
-
-.focus-ring:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(198, 124, 43, 0.1);
-}
-
-/* Skeleton loading */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Scrollbar styling */
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f3f4f6;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: #f3f4f6;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Image tint in dark-only contexts (kept for future dark mode) */
-.dark .img-tint::after { content:""; position:absolute; inset:0; background:rgba(0,0,0,.25); pointer-events:none; }
-
-/* Mobile-first responsive design */
-@media (max-width: 768px) {
+  /* Buttons */
   .btn {
-    @apply min-h-[44px] min-w-[44px]; /* iOS touch target minimum */
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+      transition-colors duration-150 select-none
+      disabled:cursor-not-allowed disabled:opacity-50;
   }
-  
-  .btn-sm {
-    @apply min-h-[40px] px-3 py-2;
+  .btn-primary { @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800; }
+  .btn-secondary { @apply btn border border-stone-300 bg-white text-stone-800 hover:border-stone-400 hover:bg-stone-50; }
+  .btn-outline { @apply btn-secondary; }
+  .btn-ghost { @apply btn text-stone-600 hover:bg-stone-100 hover:text-stone-900; }
+  .btn-soft { @apply btn bg-brand-50 text-brand-700 hover:bg-brand-100; }
+  .btn-success { @apply btn bg-emerald-600 text-white hover:bg-emerald-700; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
+  .btn-light { @apply btn bg-white/95 text-stone-900 shadow-sm hover:bg-white; }
+  .btn-glass { @apply btn border border-white/40 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20; }
+  .btn-lg { @apply px-6 py-3 text-base; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+
+  /* Chips: filters and toggles */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-sm font-medium text-stone-700
+      transition-colors hover:border-stone-300 hover:bg-stone-50;
   }
-  
-  .card-pad {
-    @apply p-4;
+  .chip-active { @apply border-stone-900 bg-stone-900 text-white hover:border-stone-900 hover:bg-stone-800; }
+
+  /* Form controls */
+  .input {
+    @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-base text-stone-900 placeholder:text-stone-400
+      transition-colors focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100;
   }
-  
-  .card-pad-sm {
-    @apply p-3;
-  }
-  
-  /* Better touch targets for mobile */
-  button, a {
-    @apply touch-manipulation;
-  }
-  
-  /* Improved mobile spacing */
-  .space-y-3 > * + * {
-    @apply mt-3;
-  }
-  
-  .space-y-4 > * + * {
-    @apply mt-4;
-  }
-  
-  /* Mobile-optimized grid */
-  .grid {
-    @apply gap-3;
-  }
-  
-  /* Better mobile typography */
-  .h1 {
-    @apply text-2xl;
-  }
-  
-  .h2 {
-    @apply text-xl;
-  }
-  
-  .h3 {
-    @apply text-lg;
-  }
-  
-  .h4 {
-    @apply text-base;
+  .label { @apply mb-1.5 block text-sm font-medium text-stone-700; }
+
+  /* Brand mark used in the navbar and footer */
+  .logo-mark { @apply flex items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-sm; }
+
+  /* Moroccan zellige-inspired pattern for decorative bands */
+  .pattern-zellige {
+    background-image:
+      radial-gradient(circle at 0 0, transparent 14px, rgba(184, 77, 40, 0.07) 15px, transparent 16px),
+      radial-gradient(circle at 100% 100%, transparent 14px, rgba(184, 77, 40, 0.07) 15px, transparent 16px),
+      radial-gradient(circle at 100% 0, transparent 14px, rgba(36, 72, 184, 0.06) 15px, transparent 16px),
+      radial-gradient(circle at 0 100%, transparent 14px, rgba(36, 72, 184, 0.06) 15px, transparent 16px);
+    background-size: 30px 30px;
   }
 }
 
-/* Touch-friendly hover states for mobile */
-@media (hover: none) and (pointer: coarse) {
-  .hover-lift:hover {
-    @apply transform-none shadow-md;
-  }
-  
-  .btn:hover {
-    @apply transform-none;
-  }
-  
-  /* Active states for touch */
-  .btn:active {
-    @apply scale-95;
-  }
-  
-  .card:active {
-    @apply scale-[0.98];
-  }
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 }
 
-/* Mobile-optimized forms */
-@media (max-width: 768px) {
-  input, textarea, select {
-    @apply text-base; /* Prevents zoom on iOS */
-  }
-  
-  .form-group {
-    @apply mb-4;
-  }
-}
-
-/* Better mobile map experience */
-@media (max-width: 768px) {
-  .map-container {
-    @apply h-64;
-  }
-  
-  .minimap {
-    @apply h-48;
-  }
-}
+/* Leaflet: match the site's typography */
+.leaflet-container { @apply font-sans; }
+.leaflet-popup-content-wrapper { @apply rounded-xl shadow-lg; }
+.leaflet-popup-content { @apply text-sm; margin: 12px 14px; }

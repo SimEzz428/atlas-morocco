@@ -1,47 +1,53 @@
 import Link from 'next/link';
-import { MapPin } from 'lucide-react';
+import { Logo } from '@/components/Logo';
+import { CITIES } from '@/data/cities';
 
-const LINKS = [
-  { href: '/cities', label: 'Cities' },
+const EXPLORE = [
+  { href: '/cities', label: 'All cities' },
   { href: '/explore', label: 'Map' },
-  { href: '/plan', label: 'Trip Planner' },
+  { href: '/plan', label: 'Trip planner' },
   { href: '/favorites', label: 'Favorites' },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-900 text-white">
-      <div className="container-pro py-12">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+    <footer className="mt-auto bg-stone-900 text-stone-300">
+      <div className="container-pro py-12 sm:py-14">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-brand rounded-xl flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xl font-bold">Atlas Morocco</p>
-                <p className="text-sm text-slate-400">Plan Unforgettable Journeys</p>
-              </div>
-            </div>
-            <p className="text-slate-300 max-w-md">
-              Discover Morocco&apos;s hidden gems with our travel planner.
-              Explore cities, plan itineraries, and experience authentic Moroccan culture.
+            <Logo tone="light" tagline />
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-stone-400">
+              City guides, a day-by-day trip planner and live local info for ten of Morocco&apos;s most loved destinations.
             </p>
           </div>
 
-          <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-            {LINKS.map(({ href, label }) => (
-              <Link key={href} href={href} className="text-slate-300 hover:text-white">
-                {label}
-              </Link>
-            ))}
+          <nav aria-label="Explore">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Explore</h2>
+            <ul className="space-y-2 text-sm">
+              {EXPLORE.map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="hover:text-white">{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Cities">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Cities</h2>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              {CITIES.map((city) => (
+                <li key={city.slug}>
+                  <Link href={`/cities/${city.slug}`} className="hover:text-white">{city.name}</Link>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
 
-        <p className="mt-10 pt-6 border-t border-slate-800 text-xs text-slate-500">
-          Photos from <a href="https://unsplash.com/?utm_source=atlas_morocco&utm_medium=referral" className="underline hover:text-slate-300" target="_blank" rel="noopener noreferrer">Unsplash</a>.
-          Map data &copy; <a href="https://www.openstreetmap.org/copyright" className="underline hover:text-slate-300" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors.
-          Weather by <a href="https://open-meteo.com/" className="underline hover:text-slate-300" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.
+        <p className="mt-10 border-t border-stone-800 pt-6 text-xs text-stone-500">
+          Photos from <a href="https://unsplash.com/?utm_source=atlas_morocco&utm_medium=referral" className="underline hover:text-stone-300" target="_blank" rel="noopener noreferrer">Unsplash</a>.
+          {' '}Map data &copy; <a href="https://www.openstreetmap.org/copyright" className="underline hover:text-stone-300" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors.
+          {' '}Weather by <a href="https://open-meteo.com/" className="underline hover:text-stone-300" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.
         </p>
       </div>
     </footer>

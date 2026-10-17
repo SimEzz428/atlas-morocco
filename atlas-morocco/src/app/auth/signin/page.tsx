@@ -39,10 +39,10 @@ function SignInForm() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-stone-600 hover:text-stone-900 mb-6">
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
@@ -60,7 +60,7 @@ function SignInForm() {
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
                   Email address
                 </label>
                 <input
@@ -77,7 +77,7 @@ function SignInForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
                   Password
                 </label>
                 <input
@@ -99,11 +99,11 @@ function SignInForm() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-stone-600">
                 Don&apos;t have an account?{" "}
                 <Link
                   href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="font-medium text-amber-600 hover:text-amber-500"
+                  className="font-medium text-brand-600 hover:text-brand-500"
                 >
                   Sign up here
                 </Link>
@@ -113,8 +113,8 @@ function SignInForm() {
         </Card>
 
         <div className="text-center">
-          <h2 className="text-sm font-medium text-slate-900 mb-4">Why sign in?</h2>
-          <div className="grid grid-cols-1 gap-3 text-sm text-slate-600">
+          <h2 className="text-sm font-medium text-stone-900 mb-4">Why sign in?</h2>
+          <div className="grid grid-cols-1 gap-3 text-sm text-stone-600">
             <div className="flex items-center justify-center gap-2">
               <User className="h-4 w-4" />
               <span>Save trip plans to your account</span>
@@ -136,7 +136,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-stone-50" />}>
       <SignInForm />
     </Suspense>
   );

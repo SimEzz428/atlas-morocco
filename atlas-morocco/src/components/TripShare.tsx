@@ -141,9 +141,9 @@ export default function TripShare({ tripTitle, tripDuration, planItems, routeSta
           </div>
 
           <div className="space-y-6">
-            <div className="bg-slate-50 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-900 mb-2">{tripTitle}</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm text-slate-600">
+            <div className="bg-stone-50 rounded-lg p-4">
+              <h4 className="font-semibold text-stone-900 mb-2">{tripTitle}</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm text-stone-600">
                 <div><strong>Duration:</strong> {tripDuration} days</div>
                 <div><strong>Places:</strong> {planItems.length}</div>
                 <div><strong>Distance:</strong> {routeStats.totalDistance}</div>
@@ -152,7 +152,7 @@ export default function TripShare({ tripTitle, tripDuration, planItems, routeSta
             </div>
 
             <div>
-              <label htmlFor="share-url" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="share-url" className="block text-sm font-medium text-stone-700 mb-2">
                 Shareable link
               </label>
               <div className="flex gap-2">
@@ -162,7 +162,7 @@ export default function TripShare({ tripTitle, tripDuration, planItems, routeSta
                   value={shareUrl}
                   readOnly
                   onFocus={(e) => e.target.select()}
-                  className="flex-1 min-w-0 px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                  className="flex-1 min-w-0 px-3 py-2 border border-stone-300 rounded-lg text-sm"
                   data-testid="share-url"
                 />
                 <Button variant="secondary" size="sm" onClick={copyToClipboard}>
@@ -170,7 +170,7 @@ export default function TripShare({ tripTitle, tripDuration, planItems, routeSta
                   {copied ? 'Copied!' : 'Copy'}
                 </Button>
               </div>
-              <p className="text-xs text-slate-500 mt-2">Anyone with the link can view this itinerary. No sign-in needed.</p>
+              <p className="text-xs text-stone-500 mt-2">Anyone with the link can view this itinerary. No sign-in needed.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -179,7 +179,7 @@ export default function TripShare({ tripTitle, tripDuration, planItems, routeSta
                 WhatsApp
               </Button>
               <Button variant="secondary" onClick={() => shareTo('mail')}>
-                <Mail className="h-4 w-4 text-slate-600" />
+                <Mail className="h-4 w-4 text-stone-600" />
                 Email
               </Button>
               <Button variant="secondary" onClick={() => shareTo('twitter')}>

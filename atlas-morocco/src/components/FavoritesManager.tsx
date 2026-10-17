@@ -18,7 +18,7 @@ export function FavoritesList() {
         <div className="card-pad">
           <div className="animate-pulse grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-56 bg-slate-100 rounded-xl"></div>
+              <div key={i} className="h-56 bg-stone-100 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -30,9 +30,9 @@ export function FavoritesList() {
     return (
       <Card>
         <div className="card-pad text-center py-12">
-          <LogIn className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+          <LogIn className="h-12 w-12 text-stone-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Sign in to see your favorites</h2>
-          <p className="text-slate-600 mb-6">
+          <p className="text-stone-600 mb-6">
             Tap the heart on any city page to save it here. Favorites are stored in your account.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -59,9 +59,9 @@ export function FavoritesList() {
     return (
       <Card>
         <div className="card-pad text-center py-12">
-          <Heart className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+          <Heart className="h-12 w-12 text-stone-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">No Favorite Cities Yet</h2>
-          <p className="text-slate-600 mb-6">
+          <p className="text-stone-600 mb-6">
             Tap the heart on a city&apos;s page to add it to your favorites.
           </p>
           <Link href="/cities" className="btn-primary">
@@ -88,8 +88,8 @@ export function FavoritesList() {
           {favoriteCities.map(({ favorite, city }) => {
             const cover = getCityCover(city.slug);
             return (
-              <div key={favorite.citySlug} className="bg-slate-50 rounded-xl overflow-hidden" data-testid="favorite-card">
-                <div className="relative h-32 bg-amber-100">
+              <div key={favorite.citySlug} className="bg-stone-50 rounded-xl overflow-hidden" data-testid="favorite-card">
+                <div className="relative h-32 bg-brand-100">
                   {cover && (
                     <Image src={unsplashImage(cover, 600, 260)} alt={`${city.name}, Morocco`} fill sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw" className="object-cover" />
                   )}
@@ -102,8 +102,8 @@ export function FavoritesList() {
                   </button>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-slate-900 mb-1">{city.name}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-2 mb-3">{city.description}</p>
+                  <h3 className="font-semibold text-stone-900 mb-1">{city.name}</h3>
+                  <p className="text-sm text-stone-600 line-clamp-2 mb-3">{city.description}</p>
                   <Link href={`/cities/${city.slug}`} className="btn-secondary btn-sm w-full">
                     <MapPin className="h-4 w-4" />
                     Explore {city.name}

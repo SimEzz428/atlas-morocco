@@ -4,7 +4,7 @@ import { Compass, Home } from "lucide-react";
 export default function NotFound() {
   return (
     <div className="container-pro py-24 text-center">
-      <Compass className="h-14 w-14 text-amber-600 mx-auto mb-6" />
+      <Compass className="h-14 w-14 text-brand-600 mx-auto mb-6" />
       <h1 className="h1 mb-4">Page not found</h1>
       <p className="lead mb-8 max-w-xl mx-auto">
         This path leads off the map. The page may have moved, or the link may be mistyped.

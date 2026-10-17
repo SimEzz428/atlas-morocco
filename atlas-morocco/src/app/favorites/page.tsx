@@ -13,7 +13,7 @@ export default function FavoritesPage() {
           <Heart className="h-8 w-8 text-red-500" />
         </div>
         <h1 className="h1 mb-2">My Favorites</h1>
-        <p className="text-slate-600 max-w-2xl mx-auto">
+        <p className="text-stone-600 max-w-2xl mx-auto">
           The Moroccan cities you&apos;ve saved. Revisit them and plan your next adventure.
         </p>
       </div>

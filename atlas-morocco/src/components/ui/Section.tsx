@@ -24,9 +24,9 @@ export function Section({
 
   const backgroundClasses = {
     default: 'bg-white',
-    muted: 'bg-slate-50',
-    brand: 'bg-amber-50',
-    gradient: 'bg-gradient-to-br from-amber-50 to-orange-50',
+    muted: 'bg-stone-50',
+    brand: 'bg-brand-50',
+    gradient: 'bg-gradient-to-br from-brand-50 to-brand-50',
   };
 
   return (

@@ -33,7 +33,7 @@ export default async function SharedTripPage({ params }: SharedTripPageProps) {
         <Card className="max-w-xl mx-auto">
           <div className="card-pad text-center py-12">
             <h1 className="h1 mb-4">Invalid Trip Link</h1>
-            <p className="text-slate-600 mb-6">This trip link appears to be invalid or incomplete. Ask the sender to copy it again.</p>
+            <p className="text-stone-600 mb-6">This trip link appears to be invalid or incomplete. Ask the sender to copy it again.</p>
             <Link href="/" className="btn-primary">
               <ArrowLeft className="h-4 w-4" />
               Back to Home
@@ -50,14 +50,14 @@ export default async function SharedTripPage({ params }: SharedTripPageProps) {
   return (
     <Section size="lg">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Share2 className="h-8 w-8 text-amber-600" />
+        <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Share2 className="h-8 w-8 text-brand-600" />
         </div>
         <h1 className="h1 mb-2">{trip.title}</h1>
-        <p className="text-slate-600 max-w-2xl mx-auto">
+        <p className="text-stone-600 max-w-2xl mx-auto">
           A {trip.duration}-day Morocco trip shared by a fellow traveler{cityNames.length > 0 && ` · ${cityNames.join(', ')}`}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-slate-500">
+        <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-stone-500">
           <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />{trip.duration} days</span>
           <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{trip.items.length} places</span>
           {trip.stats && (
@@ -74,19 +74,19 @@ export default async function SharedTripPage({ params }: SharedTripPageProps) {
         {days.map((items, i) => (
           <Card key={i} data-testid="shared-day">
             <div className="card-pad">
-              <h2 className="text-lg font-semibold text-slate-900 mb-3">Day {i + 1}</h2>
+              <h2 className="text-lg font-semibold text-stone-900 mb-3">Day {i + 1}</h2>
               {items.length === 0 ? (
-                <p className="text-slate-500 text-sm">Free day</p>
+                <p className="text-stone-500 text-sm">Free day</p>
               ) : (
                 <div className="space-y-2">
                   {items.map((item, j) => (
-                    <div key={`${item.name}-${j}`} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
+                    <div key={`${item.name}-${j}`} className="flex items-center gap-3 p-3 bg-stone-50 rounded-lg">
+                      <div className="w-8 h-8 bg-brand-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
                         {CATEGORY_EMOJI[item.category.toLowerCase()] ?? '📍'}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-900 truncate">{item.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <h3 className="font-semibold text-stone-900 truncate">{item.name}</h3>
+                        <div className="flex items-center gap-2 text-sm text-stone-600">
                           <Badge variant="accent" size="sm" className="capitalize">{item.category === 'daytrip' ? 'Day trip' : item.category}</Badge>
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
@@ -106,7 +106,7 @@ export default async function SharedTripPage({ params }: SharedTripPageProps) {
       <Card className="max-w-3xl mx-auto mt-8">
         <div className="card-pad text-center">
           <h2 className="h3 mb-4">Inspired by this trip?</h2>
-          <p className="text-slate-600 mb-6">Create your own Morocco adventure with the Atlas Morocco trip planner.</p>
+          <p className="text-stone-600 mb-6">Create your own Morocco adventure with the Atlas Morocco trip planner.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/plan" className="btn-primary">
               <Calendar className="h-4 w-4" />

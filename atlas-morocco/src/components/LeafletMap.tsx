@@ -55,7 +55,7 @@ export default function LeafletMap({ center, zoom, cityName, markers = [], highl
           radius: highlighted ? 10 : 7,
           color: "#ffffff",
           weight: 2,
-          fillColor: highlighted ? "#2563eb" : "#C67C2B",
+          fillColor: highlighted ? "#2448B8" : "#B84D28",
           fillOpacity: 0.95,
         })
           .bindPopup(
@@ -91,7 +91,7 @@ export default function LeafletMap({ center, zoom, cityName, markers = [], highl
   return (
     <div
       ref={containerRef}
-      className="w-full h-full min-h-[320px] rounded-xl bg-slate-100 relative z-0"
+      className="w-full h-full min-h-[320px] rounded-xl bg-stone-100 relative z-0"
       role="region"
       aria-label={`Map of ${cityName}`}
     />

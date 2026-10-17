@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, MapPin, ArrowRight } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Search, MapPin, ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { haversineDistance } from "@/features/planner/utils/geo";
+import { cn } from "@/lib/utils";
 
 interface City {
   slug: string;
@@ -70,118 +69,120 @@ export default function CitySearch({ cities }: CitySearchProps) {
     });
   }, [cities, searchTerm, selectedCategory, sortBy]);
 
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("all");
+  };
+
   return (
     <div className="space-y-6">
-      <Card>
-        <div className="card-pad">
-          <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <input
-                type="search"
-                placeholder="Search cities..."
-                aria-label="Search cities"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10"
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.id ? "primary" : "secondary"}
-                  size="sm"
-                  aria-pressed={selectedCategory === category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                >
-                  {category.name} ({category.count})
-                </Button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label htmlFor="city-sort" className="text-sm text-slate-600 whitespace-nowrap">Sort by:</label>
-              <select
-                id="city-sort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "name" | "popularity" | "distance")}
-                className="input text-sm max-w-xs"
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+            <input
+              type="search"
+              placeholder="Search cities or what they're known for..."
+              aria-label="Search cities"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input pl-10 pr-10 [&::-webkit-search-cancel-button]:hidden"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+                aria-label="Clear search"
               >
-                <option value="popularity">Popularity</option>
-                <option value="name">Name</option>
-                <option value="distance">Distance from Marrakech</option>
-              </select>
-            </div>
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="city-sort" className="whitespace-nowrap text-sm text-stone-600">Sort by:</label>
+            <select
+              id="city-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "name" | "popularity" | "distance")}
+              className="input py-3 pr-9 sm:w-56"
+            >
+              <option value="popularity">Popularity</option>
+              <option value="name">Name</option>
+              <option value="distance">Distance from Marrakech</option>
+            </select>
           </div>
         </div>
-      </Card>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCities.map((city, index) => (
-          <Link key={city.slug} href={`/cities/${city.slug}`} className="group block" data-testid="city-card-link">
-            <Card className="h-full hover-lift transition-all duration-300">
-              <div className="relative h-48 overflow-hidden">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="Filter cities">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              aria-pressed={selectedCategory === category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={cn("chip flex-none", selectedCategory === category.id && "chip-active")}
+            >
+              {category.name} ({category.count})
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-sm text-stone-500" aria-live="polite">
+        {filteredCities.length === cities.length
+          ? `${cities.length} cities`
+          : `Showing ${filteredCities.length} of ${cities.length} cities`}
+      </p>
+
+      {filteredCities.length > 0 ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredCities.map((city, index) => (
+            <Link
+              key={city.slug}
+              href={`/cities/${city.slug}`}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm transition-shadow hover:shadow-lg"
+              data-testid="city-card-link"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-stone-200">
                 {city.image ? (
                   <Image
                     src={city.image}
                     alt={`${city.name}, Morocco`}
                     fill
-                    sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
+                    sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                     priority={index < 3}
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
-                    <MapPin className="h-12 w-12 text-amber-600" />
+                  <div className="flex h-full items-center justify-center bg-brand-100">
+                    <MapPin className="h-10 w-10 text-brand-600" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-stone-800 backdrop-blur-sm">
+                  <MapPin className="h-3.5 w-3.5 text-brand-600" />
+                  {city.placeCount} places
+                </span>
               </div>
 
-              <div className="card-pad">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-slate-900">{city.name}</h3>
-                  <span className="inline-flex items-center gap-1 text-sm text-slate-500">
-                    <MapPin className="h-4 w-4" />
-                    {city.placeCount} places
-                  </span>
-                </div>
-
-                <p className="text-slate-600 text-sm mb-4 line-clamp-2">{city.description}</p>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-amber-600 group-hover:text-amber-700 transition-colors">
-                    Explore City
-                  </span>
-                  <ArrowRight className="h-4 w-4 text-amber-600 group-hover:translate-x-1 transition-transform" />
-                </div>
+              <div className="flex flex-1 flex-col p-5">
+                <h3 className="font-display text-xl font-bold text-stone-900">{city.name}</h3>
+                <p className="mt-1.5 line-clamp-2 flex-1 text-sm leading-relaxed text-stone-600">{city.description}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
+                  Explore city
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {filteredCities.length === 0 && (
-        <Card>
-          <div className="card-pad text-center py-12">
-            <Search className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-            <h3 className="h3 mb-2">No Cities Found</h3>
-            <p className="text-slate-600 mb-4">
-              Try adjusting your search terms or filters to find more cities.
-            </p>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="card card-pad py-14 text-center">
+          <Search className="mx-auto mb-4 h-10 w-10 text-stone-300" />
+          <h3 className="h4 mb-2">No Cities Found</h3>
+          <p className="mb-5 text-stone-600">Try a different search, or clear the filters to see every city.</p>
+          <button className="btn-secondary" onClick={clearFilters}>
+            Clear Filters
+          </button>
+        </div>
       )}
     </div>
   );

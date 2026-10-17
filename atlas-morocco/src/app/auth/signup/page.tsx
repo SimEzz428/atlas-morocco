@@ -49,22 +49,22 @@ function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-stone-600 hover:text-stone-900 transition-colors mb-4">
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-          <h1 className="h1 text-slate-900 mb-2">Create Account</h1>
-          <p className="text-slate-600">Join Atlas Morocco and start planning your perfect trip</p>
+          <h1 className="h1 text-stone-900 mb-2">Create Account</h1>
+          <p className="text-stone-600">Join Atlas Morocco and start planning your perfect trip</p>
         </div>
 
         <Card>
           <div className="card-pad">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-2">
                   Full Name
                 </label>
                 <input
@@ -80,7 +80,7 @@ function SignUpForm() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
                   Email Address
                 </label>
                 <input
@@ -96,7 +96,7 @@ function SignUpForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
                   Password
                 </label>
                 <input
@@ -125,11 +125,11 @@ function SignUpForm() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-stone-600">
                 Already have an account?{" "}
                 <Link
                   href={`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="font-medium text-amber-600 hover:text-amber-500"
+                  className="font-medium text-brand-600 hover:text-brand-500"
                 >
                   Sign in
                 </Link>
@@ -144,7 +144,7 @@ function SignUpForm() {
 
 export default function SignUpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-stone-50" />}>
       <SignUpForm />
     </Suspense>
   );

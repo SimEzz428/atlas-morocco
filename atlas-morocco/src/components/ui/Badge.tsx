@@ -16,8 +16,8 @@ export function Badge({
   ...props 
 }: BadgeProps) {
   const variantClasses = {
-    default: 'bg-slate-50 text-slate-700 border-slate-200',
-    brand: 'bg-amber-50 text-amber-700 border-amber-200',
+    default: 'bg-stone-50 text-stone-700 border-stone-200',
+    brand: 'bg-brand-50 text-brand-700 border-brand-200',
     accent: 'bg-blue-50 text-blue-700 border-blue-200',
     success: 'bg-green-50 text-green-700 border-green-200',
     warning: 'bg-yellow-50 text-yellow-700 border-yellow-200',

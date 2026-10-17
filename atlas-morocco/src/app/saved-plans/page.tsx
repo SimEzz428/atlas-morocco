@@ -37,8 +37,8 @@ interface SavedPlan {
 }
 
 const CATEGORY_STYLES: Record<string, { Icon: typeof Building; className: string }> = {
-  restaurant: { Icon: UtensilsCrossed, className: "bg-orange-100 text-orange-700" },
-  food: { Icon: UtensilsCrossed, className: "bg-orange-100 text-orange-700" },
+  restaurant: { Icon: UtensilsCrossed, className: "bg-brand-100 text-brand-700" },
+  food: { Icon: UtensilsCrossed, className: "bg-brand-100 text-brand-700" },
   cafe: { Icon: Coffee, className: "bg-yellow-100 text-yellow-700" },
   shopping: { Icon: ShoppingBag, className: "bg-purple-100 text-purple-700" },
   market: { Icon: ShoppingBag, className: "bg-purple-100 text-purple-700" },
@@ -118,10 +118,10 @@ export default function SavedPlansPage() {
     return (
       <div className="container-pro py-8">
         <div className="space-y-6">
-          <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
+          <div className="h-8 w-64 bg-stone-200 rounded animate-pulse" />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 bg-slate-200 rounded-2xl animate-pulse" />
+              <div key={i} className="h-64 bg-stone-200 rounded-2xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function SavedPlansPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="h1">My Saved Plans</h1>
-            <p className="text-slate-600 mt-2">Open a plan to keep editing it, or start a new one.</p>
+            <p className="text-stone-600 mt-2">Open a plan to keep editing it, or start a new one.</p>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/plan" className="btn-primary">
@@ -154,9 +154,9 @@ export default function SavedPlansPage() {
         {plans.length === 0 ? (
           <Card>
             <div className="card-pad text-center py-12">
-              <Calendar className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h2 className="text-lg font-semibold text-slate-900 mb-2">No Saved Plans Yet</h2>
-              <p className="text-slate-600 mb-6">Plans you build while signed in are saved here automatically.</p>
+              <Calendar className="h-12 w-12 text-stone-400 mx-auto mb-4" />
+              <h2 className="text-lg font-semibold text-stone-900 mb-2">No Saved Plans Yet</h2>
+              <p className="text-stone-600 mb-6">Plans you build while signed in are saved here automatically.</p>
               <Link href="/plan" className="btn-primary">
                 <Plus className="h-4 w-4" />
                 Create Your First Plan
@@ -173,7 +173,7 @@ export default function SavedPlansPage() {
                   <div className="p-6 flex flex-col h-full">
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-2 truncate">{plan.title}</h2>
+                        <h2 className="text-lg font-semibold text-stone-900 mb-2 truncate">{plan.title}</h2>
                         <div className="flex flex-wrap gap-1.5">
                           {isCurrent && (
                             <Badge variant="success" size="sm">
@@ -201,7 +201,7 @@ export default function SavedPlansPage() {
                       </Button>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-slate-600 mb-4">
+                    <div className="flex items-center gap-4 text-sm text-stone-600 mb-4">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
                         {totalDays(plan.items)} {totalDays(plan.items) === 1 ? "day" : "days"}
@@ -220,16 +220,16 @@ export default function SavedPlansPage() {
                             <div className={`p-1 rounded ${className}`}>
                               <Icon className="h-4 w-4" />
                             </div>
-                            <span className="text-slate-700 truncate flex-1">{item.name}</span>
+                            <span className="text-stone-700 truncate flex-1">{item.name}</span>
                             <Badge size="sm">Day {item.day || 1}</Badge>
                           </div>
                         );
                       })}
-                      {plan.items.length > 3 && <div className="text-xs text-slate-500">+{plan.items.length - 3} more places</div>}
+                      {plan.items.length > 3 && <div className="text-xs text-stone-500">+{plan.items.length - 3} more places</div>}
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 mt-auto border-t border-slate-200">
-                      <div className="text-xs text-slate-500">Updated {formatDate(plan.updatedAt)}</div>
+                    <div className="flex items-center justify-between pt-4 mt-auto border-t border-stone-200">
+                      <div className="text-xs text-stone-500">Updated {formatDate(plan.updatedAt)}</div>
                       <Button variant="secondary" size="sm" onClick={() => handleOpenPlan(plan)} data-testid="open-plan">
                         <FolderOpen className="h-4 w-4" />
                         Open in planner
@@ -243,18 +243,18 @@ export default function SavedPlansPage() {
         )}
 
         {plans.length > 0 && (
-          <div className="bg-slate-50 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Your Travel Stats</h2>
+          <div className="bg-stone-50 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-stone-900 mb-4">Your Travel Stats</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { value: plans.length, label: "Plans", color: "text-blue-600" },
                 { value: plans.reduce((sum, plan) => sum + plan.items.length, 0), label: "Places", color: "text-green-600" },
                 { value: plans.reduce((sum, plan) => sum + totalDays(plan.items), 0), label: "Days Planned", color: "text-purple-600" },
-                { value: allCities.size, label: "Cities", color: "text-orange-600" },
+                { value: allCities.size, label: "Cities", color: "text-brand-600" },
               ].map(({ value, label, color }) => (
                 <div key={label} className="text-center">
                   <div className={`text-2xl font-bold ${color}`}>{value}</div>
-                  <div className="text-sm text-slate-600">{label}</div>
+                  <div className="text-sm text-stone-600">{label}</div>
                 </div>
               ))}
             </div>
