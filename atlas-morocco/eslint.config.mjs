@@ -1,30 +1,16 @@
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 
 export default [
+  ...nextVitals,
+  ...nextTs,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-    },
+    ignores: ['.next/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'public/sw.js', 'next-env.d.ts'],
+  },
+  {
     rules: {
-      // Basic rules for now
-      'no-unused-vars': 'off',
-      'no-console': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      // Route handlers log failures server-side; keep warnings for stray client logs.
+      'no-console': ['warn', { allow: ['error', 'warn'] }],
     },
   },
 ];

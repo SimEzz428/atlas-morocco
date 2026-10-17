@@ -1,112 +1,73 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ServiceWorker from "@/components/ServiceWorker";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
 import { Providers } from "@/components/Providers";
+import { siteUrl } from "@/lib/site";
 
-const inter = Inter({ 
-  subsets: ["latin"], 
-  variable: "--font-inter", 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
-  preload: true
 });
 
-const poppins = Poppins({ 
-  weight: ["400", "500", "600", "700", "800"], 
-  subsets: ["latin"], 
-  variable: "--font-poppins", 
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  variable: "--font-poppins",
   display: "swap",
-  preload: true
 });
+
+const description =
+  "Discover Morocco's hidden gems with our travel planner. Explore cities, plan itineraries, and experience authentic Moroccan culture.";
 
 export const metadata: Metadata = {
-  title: "Atlas Morocco - Plan Unforgettable Journeys",
-  description: "Discover Morocco's hidden gems with our intelligent travel planner. Explore cities, plan itineraries, and experience authentic Moroccan culture.",
-  keywords: [
-    "Morocco travel",
-    "travel planner",
-    "Morocco cities",
-    "itinerary planner",
-    "Morocco tourism",
-    "travel guide",
-    "Morocco destinations"
-  ],
-  authors: [{ name: "Atlas Morocco Team" }],
-  creator: "Atlas Morocco",
-  publisher: "Atlas Morocco",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
+  metadataBase: new URL(siteUrl()),
+  title: {
+    default: "Atlas Morocco - Plan Unforgettable Journeys",
+    template: "%s | Atlas Morocco",
   },
-  metadataBase: new URL('https://atlas-morocco.com'),
-  alternates: {
-    canonical: '/',
+  description,
+  keywords: ["Morocco travel", "travel planner", "Morocco cities", "itinerary planner", "Morocco tourism", "travel guide"],
+  applicationName: "Atlas Morocco",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icons/apple-touch-icon.png",
   },
   openGraph: {
     title: "Atlas Morocco - Plan Unforgettable Journeys",
-    description: "Discover Morocco's hidden gems with our intelligent travel planner.",
-    url: 'https://atlas-morocco.com',
-    siteName: 'Atlas Morocco',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Atlas Morocco - Plan Unforgettable Journeys',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
+    description,
+    siteName: "Atlas Morocco",
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: "Atlas Morocco - Plan Unforgettable Journeys",
-    description: "Discover Morocco's hidden gems with our intelligent travel planner.",
-    images: ['/og-image.jpg'],
+    description,
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#C67C2B",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#C67C2B" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-              <body className="min-h-screen bg-white text-slate-900 antialiased">
-                <Providers>
-                  <div className="flex flex-col min-h-screen">
-                    <Navbar />
-                    <main className="flex-1">
-                      {children}
-                    </main>
-                    <Footer />
-                  </div>
-                  <ServiceWorker />
-                  <PerformanceMonitor />
-                </Providers>
-              </body>
+      <body className="min-h-screen bg-white text-slate-900 antialiased">
+        <Providers>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <ServiceWorker />
+        </Providers>
+      </body>
     </html>
   );
 }

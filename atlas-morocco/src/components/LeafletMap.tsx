@@ -1,154 +1,99 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef } from "react";
+import type { LayerGroup, Map as LeafletMapInstance } from "leaflet";
+
+export type MapMarker = {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+  category?: string;
+};
 
 interface LeafletMapProps {
   center: [number, number];
   zoom: number;
   cityName: string;
+  markers?: MapMarker[];
+  // Marker shown with an accent colour, e.g. the place the user just clicked.
+  highlightedId?: string;
 }
 
-export default function LeafletMap({ center, zoom, cityName }: LeafletMapProps) {
-  const [isClient, setIsClient] = useState(false);
-  const [isMapReady, setIsMapReady] = useState(false);
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+export default function LeafletMap({ center, zoom, cityName, markers = [], highlightedId }: LeafletMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
-  const leafletRef = useRef<any>(null);
+  const mapRef = useRef<LeafletMapInstance | null>(null);
+  const layerRef = useRef<LayerGroup | null>(null);
+  const [lat, lon] = center;
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    let cancelled = false;
 
-  // Initialize map once
-  useEffect(() => {
-    if (!isClient || !containerRef.current || mapRef.current) return;
+    (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !containerRef.current) return;
 
-    let isCancelled = false;
-
-    const initializeMap = async () => {
-      try {
-        const L = (await import("leaflet")).default;
-        leafletRef.current = L;
-        
-        // Fix default icons
-        delete (L.Icon.Default.prototype as any)._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-        });
-
-        if (isCancelled || !containerRef.current) return;
-
-        // Ensure container has proper dimensions
-        const container = containerRef.current;
-        if (container.offsetHeight === 0) {
-          container.style.height = '320px';
-          container.style.width = '100%';
-        }
-
-        const map = L.map(container, {
-          center: center,
-          zoom: zoom,
-          zoomControl: true,
-          scrollWheelZoom: true,
-          doubleClickZoom: true,
-          boxZoom: true,
-          dragging: true,
-          keyboard: true,
-          touchZoom: true
-        });
-
-        mapRef.current = map;
-
-        // Add tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
+      if (!mapRef.current) {
+        mapRef.current = L.map(containerRef.current, { scrollWheelZoom: false }).setView([lat, lon], zoom);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
           maxZoom: 19,
-        }).addTo(map);
-
-        // Add marker
-        const marker = L.marker(center).addTo(map);
-        marker.bindPopup(
-          `<div class="text-center p-2">
-            <h3 class="font-semibold text-lg">${cityName}</h3>
-            <p class="text-sm text-gray-600">${center[0].toFixed(4)}, ${center[1].toFixed(4)}</p>
-          </div>`
-        );
-        markerRef.current = marker;
-
-        // Fit map to show marker properly
-        map.fitBounds([[center[0] - 0.01, center[1] - 0.01], [center[0] + 0.01, center[1] + 0.01]], {
-          padding: [20, 20]
-        });
-
-        setIsMapReady(true);
-      } catch (error) {
-        console.error('Error initializing map:', error);
+        }).addTo(mapRef.current);
+        layerRef.current = L.layerGroup().addTo(mapRef.current);
       }
-    };
+      const map = mapRef.current;
+      const layer = layerRef.current!;
+      layer.clearLayers();
 
-    initializeMap();
+      const points = markers.length > 0 ? markers : [{ id: "city", name: cityName, lat, lon }];
+      for (const m of points) {
+        const highlighted = m.id === highlightedId;
+        L.circleMarker([m.lat, m.lon], {
+          radius: highlighted ? 10 : 7,
+          color: "#ffffff",
+          weight: 2,
+          fillColor: highlighted ? "#2563eb" : "#C67C2B",
+          fillOpacity: 0.95,
+        })
+          .bindPopup(
+            `<strong>${escapeHtml(m.name)}</strong>${m.category ? `<br><span style="color:#64748b;text-transform:capitalize">${escapeHtml(m.category)}</span>` : ""}`
+          )
+          .addTo(layer);
+      }
+
+      // Frame the in-city places; far-away day trips would otherwise zoom the map out too much.
+      const local = points.filter((p) => p.category !== "daytrip");
+      const framed = local.length > 1 ? local : points;
+      // No animation: the map can unmount mid-zoom (e.g. switching tabs), which makes Leaflet throw.
+      if (framed.length > 1) {
+        map.fitBounds(L.latLngBounds(framed.map((p) => [p.lat, p.lon] as [number, number])), { padding: [30, 30], maxZoom: 15, animate: false });
+      } else {
+        map.setView([lat, lon], zoom, { animate: false });
+      }
+    })();
 
     return () => {
-      isCancelled = true;
-      try { 
-        if (mapRef.current) {
-          mapRef.current.remove(); 
-        }
-      } catch (error) {
-        console.error('Error cleaning up map:', error);
-      }
-      mapRef.current = null;
-      markerRef.current = null;
-      setIsMapReady(false);
+      cancelled = true;
     };
-  }, [isClient, center, zoom, cityName]);
+  }, [lat, lon, zoom, cityName, markers, highlightedId]);
 
-  // Update center/marker when props change
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !isMapReady) return;
-
-    try { 
-      map.setView(center, zoom); 
-      
-      if (markerRef.current) {
-        map.removeLayer(markerRef.current);
-        markerRef.current = null;
-      }
-      
-      const L = leafletRef.current;
-      if (!L) return;
-      
-      const marker = L.marker(center).addTo(map);
-      marker.bindPopup(
-        `<div class="text-center p-2">
-          <h3 class="font-semibold text-lg">${cityName}</h3>
-          <p class="text-sm text-gray-600">${center[0].toFixed(4)}, ${center[1].toFixed(4)}</p>
-        </div>`
-      );
-      markerRef.current = marker;
-    } catch (error) {
-      console.error('Error updating map:', error);
-    }
-  }, [center, zoom, cityName, isMapReady]);
-
-  if (!isClient) {
-    return (
-      <div className="w-full h-80 bg-slate-100 rounded-xl flex items-center justify-center">
-        <div className="text-slate-500">Loading map...</div>
-      </div>
-    );
-  }
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+      layerRef.current = null;
+    };
+  }, []);
 
   return (
-    <div 
-      ref={containerRef} 
-      className="w-full h-80 rounded-xl bg-slate-100" 
-      style={{ minHeight: '320px' }}
+    <div
+      ref={containerRef}
+      className="w-full h-full min-h-[320px] rounded-xl bg-slate-100 relative z-0"
+      role="region"
+      aria-label={`Map of ${cityName}`}
     />
   );
 }

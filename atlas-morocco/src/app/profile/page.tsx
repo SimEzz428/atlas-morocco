@@ -2,103 +2,98 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { User, Mail, Calendar, Settings, LogOut, Bookmark, Heart } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { User, Mail, Calendar, Settings, LogOut, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+
+type Profile = {
+  user: { name: string | null; email: string | null; createdAt: string };
+  stats: { planCount: number; placeCount: number; cityCount: number; favoriteCount: number };
+};
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/signin");
+      router.replace("/auth/signin?callbackUrl=%2Fprofile");
+      return;
     }
+    if (status !== "authenticated") return;
+    fetch("/api/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setProfile)
+      .catch(() => setProfile(null));
   }, [status, router]);
 
-  if (status === "loading") {
+  if (status !== "authenticated") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
-        </div>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin" aria-label="Loading" />
       </div>
     );
   }
 
-  if (!session) {
-    return null;
-  }
-
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
+  const name = profile?.user.name ?? session?.user?.name ?? "Traveler";
+  const email = profile?.user.email ?? session?.user?.email ?? "";
+  const stats = profile?.stats;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="bg-slate-50 min-h-[70vh]">
       <div className="container-pro py-8">
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-4">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
           <h1 className="h1 text-slate-900">Profile</h1>
-          <p className="text-slate-600">Manage your account and preferences</p>
+          <p className="text-slate-600">Your account and travel activity</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Profile Information */}
           <div className="md:col-span-2">
             <Card>
               <div className="card-pad">
-                <h2 className="h2 mb-6 flex items-center gap-2">
+                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                   <User className="h-5 w-5" />
                   Profile Information
                 </h2>
-                
+
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-8 w-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center text-2xl font-semibold text-amber-700">
+                      {name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900">{session.user?.name || "User"}</h3>
-                      <p className="text-slate-600">{session.user?.email}</p>
+                      <p className="font-semibold text-slate-900">{name}</p>
+                      <p className="text-slate-600">{email}</p>
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Full Name
-                      </label>
+                      <span className="block text-sm font-medium text-slate-700 mb-2">Full Name</span>
                       <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
                         <User className="h-4 w-4 text-slate-400" />
-                        <span className="text-slate-900">{session.user?.name || "Not provided"}</span>
+                        <span className="text-slate-900">{name}</span>
                       </div>
                     </div>
-
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Email Address
-                      </label>
+                      <span className="block text-sm font-medium text-slate-700 mb-2">Email Address</span>
                       <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
                         <Mail className="h-4 w-4 text-slate-400" />
-                        <span className="text-slate-900">{session.user?.email}</span>
+                        <span className="text-slate-900 truncate">{email}</span>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Member Since
-                    </label>
+                    <span className="block text-sm font-medium text-slate-700 mb-2">Member Since</span>
                     <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
                       <Calendar className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-900">Recently joined</span>
+                      <span className="text-slate-900">
+                        {profile ? new Date(profile.user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "…"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -106,44 +101,45 @@ export default function ProfilePage() {
             </Card>
           </div>
 
-          {/* Account Actions */}
-          <div>
+          <div className="space-y-6">
             <Card>
               <div className="card-pad">
-                <h2 className="h2 mb-6 flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Account Actions
-                </h2>
-                
-                <div className="space-y-4">
-                  <Button
-                    onClick={handleSignOut}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </div>
+                <h2 className="text-xl font-semibold mb-4">Your Activity</h2>
+                <dl className="space-y-3" data-testid="profile-stats">
+                  {[
+                    { label: "Saved plans", value: stats?.planCount },
+                    { label: "Places planned", value: stats?.placeCount },
+                    { label: "Cities planned", value: stats?.cityCount },
+                    { label: "Favorite cities", value: stats?.favoriteCount },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between items-center">
+                      <dt className="text-slate-600">{label}</dt>
+                      <dd className="font-semibold text-slate-900">{value ?? "…"}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
             </Card>
 
-            {/* Quick Stats */}
-            <Card className="mt-6">
+            <Card>
               <div className="card-pad">
-                <h3 className="h3 mb-4">Your Activity</h3>
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Account
+                </h2>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Trips Created</span>
-                    <span className="font-semibold text-slate-900">0</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Places Saved</span>
-                    <span className="font-semibold text-slate-900">0</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Cities Visited</span>
-                    <span className="font-semibold text-slate-900">0</span>
-                  </div>
+                  <Link href="/saved-plans" className="btn-secondary w-full">
+                    <Bookmark className="h-4 w-4" />
+                    My Plans
+                  </Link>
+                  <Link href="/favorites" className="btn-secondary w-full">
+                    <Heart className="h-4 w-4" />
+                    My Favorites
+                  </Link>
+                  <Button variant="danger" onClick={() => signOut({ callbackUrl: "/" })} className="w-full">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
                 </div>
               </div>
             </Card>

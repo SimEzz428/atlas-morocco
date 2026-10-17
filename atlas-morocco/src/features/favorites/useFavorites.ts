@@ -13,112 +13,105 @@ export type Favorite = {
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
+  const userId = session?.user?.id;
   const { addToast } = useToast();
 
-  // Load favorites from API
   const loadFavorites = useCallback(async () => {
-    if (!session?.user?.id) {
+    if (!userId) {
       setFavorites([]);
       return;
     }
-
     setIsLoading(true);
     try {
       const response = await fetch("/api/favorites");
       if (response.ok) {
         const data = await response.json();
         setFavorites(data.favorites || []);
-      } else {
-        console.error("Failed to load favorites");
       }
-    } catch (error) {
-      console.error("Error loading favorites:", error);
+    } catch {
+      addToast({ type: "error", title: "Couldn't load your favorites" });
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user?.id]);
+  }, [userId, addToast]);
 
-  // Add favorite
-  const addFavorite = useCallback(async (citySlug: string) => {
-    if (!session?.user?.id) {
-      addToast({ type: "error", title: "Please sign in to add favorites" });
-      return false;
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!userId) {
+      setFavorites([]);
+      setIsLoading(false);
+      return;
     }
+    loadFavorites();
+  }, [status, userId, loadFavorites]);
 
-    try {
-      const response = await fetch("/api/favorites", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ citySlug }),
-      });
+  const isFavorited = useCallback((citySlug: string) => favorites.some((fav) => fav.citySlug === citySlug), [favorites]);
 
-      if (response.ok) {
-        const data = await response.json();
-        setFavorites(prev => [...prev, data.favorite]);
-        addToast({ type: "success", title: "City added to favorites!" });
-        return true;
-      } else {
-        const error = await response.json();
-        if (error.error === "City already favorited") {
-          addToast({ type: "info", title: "City is already in your favorites" });
-        } else {
-          addToast({ type: "error", title: "Failed to add favorite" });
-        }
+  const addFavorite = useCallback(
+    async (citySlug: string) => {
+      if (!userId) {
+        addToast({ type: "info", title: "Sign in to save favorite cities" });
         return false;
       }
-    } catch (error) {
-      console.error("Error adding favorite:", error);
-      addToast({ type: "error", title: "Failed to add favorite" });
-      return false;
-    }
-  }, [session?.user?.id, addToast]);
-
-  // Remove favorite
-  const removeFavorite = useCallback(async (citySlug: string) => {
-    if (!session?.user?.id) {
-      addToast({ type: "error", title: "Please sign in to manage favorites" });
-      return false;
-    }
-
-    try {
-      const response = await fetch(`/api/favorites?citySlug=${citySlug}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setFavorites(prev => prev.filter(fav => fav.citySlug !== citySlug));
-        addToast({ type: "success", title: "City removed from favorites" });
+      const optimistic: Favorite = { id: `pending-${citySlug}`, userId, citySlug, createdAt: new Date().toISOString() };
+      setFavorites((prev) => (prev.some((f) => f.citySlug === citySlug) ? prev : [optimistic, ...prev]));
+      try {
+        const response = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ citySlug }),
+        });
+        if (!response.ok) throw new Error("Failed to add favorite");
+        const { favorite } = (await response.json()) as { favorite: Favorite };
+        setFavorites((prev) => prev.map((f) => (f.citySlug === citySlug ? favorite : f)));
+        addToast({ type: "success", title: "Added to favorites", duration: 2500 });
         return true;
-      } else {
+      } catch {
+        setFavorites((prev) => prev.filter((f) => f.id !== optimistic.id));
+        addToast({ type: "error", title: "Failed to add favorite" });
+        return false;
+      }
+    },
+    [userId, addToast]
+  );
+
+  const removeFavorite = useCallback(
+    async (citySlug: string) => {
+      if (!userId) {
+        addToast({ type: "info", title: "Sign in to manage favorites" });
+        return false;
+      }
+      const previous = favorites;
+      setFavorites((prev) => prev.filter((f) => f.citySlug !== citySlug));
+      try {
+        const response = await fetch(`/api/favorites?citySlug=${encodeURIComponent(citySlug)}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to remove favorite");
+        addToast({ type: "success", title: "Removed from favorites", duration: 2500 });
+        return true;
+      } catch {
+        setFavorites(previous);
         addToast({ type: "error", title: "Failed to remove favorite" });
         return false;
       }
-    } catch (error) {
-      console.error("Error removing favorite:", error);
-      addToast({ type: "error", title: "Failed to remove favorite" });
-      return false;
-    }
-  }, [session?.user?.id, addToast]);
+    },
+    [userId, favorites, addToast]
+  );
 
-  // Check if city is favorited
-  const isFavorited = useCallback((citySlug: string) => {
-    return favorites.some(fav => fav.citySlug === citySlug);
-  }, [favorites]);
-
-  // Load favorites on mount and when session changes
-  useEffect(() => {
-    loadFavorites();
-  }, [loadFavorites]);
+  const toggleFavorite = useCallback(
+    (citySlug: string) => (isFavorited(citySlug) ? removeFavorite(citySlug) : addFavorite(citySlug)),
+    [isFavorited, addFavorite, removeFavorite]
+  );
 
   return {
     favorites,
-    isLoading,
+    isLoading: status === "loading" || isLoading,
+    isReady: status !== "loading" && !isLoading,
+    isSignedIn: Boolean(userId),
     addFavorite,
     removeFavorite,
+    toggleFavorite,
     isFavorited,
     loadFavorites,
   };

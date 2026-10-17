@@ -1,0 +1,11 @@
+.DS_Store
+
+# Local env files (atlas-morocco/.gitignore covers the app's own)
+.env.local
+
+# Python service: virtualenvs, bytecode and local databases
+moroccodata/**/venv/
+moroccodata/**/.venv/
+__pycache__/
+*.pyc
+*.db

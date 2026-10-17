@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { ArrowLeft, Mail, Lock, User } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { safeCallbackUrl } from "@/lib/redirect";
 
-export default function SignUpPage() {
+function SignUpForm() {
+  const router = useRouter();
+  const callbackUrl = safeCallbackUrl(useSearchParams().get("callbackUrl"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,30 +24,32 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      // Create account via API
       const r = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name, password }),
       });
-      
-      if (!r.ok && r.status !== 409) {
-        const j = await r.json().catch(() => ({} as any));
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}));
         throw new Error(j?.error || "Registration failed");
       }
 
-      // Redirect to sign-in page with success message
-      router.push("/auth/signin?message=Account created successfully! Please sign in.");
-    } catch (error) {
-      console.error("Sign-up error:", error);
-      setError(error instanceof Error ? error.message : "An unexpected error occurred. Please try again.");
-    } finally {
+      const result = await signIn("credentials", { email, password, redirect: false });
+      if (result?.ok && !result.error) {
+        router.push(callbackUrl);
+        router.refresh();
+        return;
+      }
+      // Account exists but automatic sign-in failed; let the user sign in manually.
+      router.push(`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred. Please try again.");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-4">
@@ -66,6 +70,7 @@ export default function SignUpPage() {
                 <input
                   id="name"
                   type="text"
+                  autoComplete="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="input"
@@ -81,6 +86,7 @@ export default function SignUpPage() {
                 <input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="input"
@@ -96,26 +102,24 @@ export default function SignUpPage() {
                 <input
                   id="password"
                   type="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input"
-                  placeholder="Create a password"
+                  placeholder="At least 6 characters"
                   required
                   minLength={6}
+                  maxLength={72}
                 />
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <p className="text-sm text-red-600">{error}</p>
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
@@ -123,7 +127,10 @@ export default function SignUpPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-600">
                 Already have an account?{" "}
-                <Link href="/auth/signin" className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link
+                  href={`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+                  className="font-medium text-amber-600 hover:text-amber-500"
+                >
                   Sign in
                 </Link>
               </p>
@@ -132,5 +139,13 @@ export default function SignUpPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <SignUpForm />
+    </Suspense>
   );
 }

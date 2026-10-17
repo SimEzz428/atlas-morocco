@@ -11,7 +11,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ 
   children, 
   variant = 'default',
-  padding = 'md',
+  padding = 'none',
   className,
   ...props 
 }: CardProps) {
@@ -32,7 +32,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-2xl transition-all duration-300',
+        'rounded-2xl overflow-hidden transition-all duration-300',
         variantClasses[variant],
         paddingClasses[padding],
         className
