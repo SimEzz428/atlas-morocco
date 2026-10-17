@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -65,27 +65,32 @@ export default function SavedPlansPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
 
-  const fetchSavedPlans = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/plans");
-      if (!response.ok) throw new Error("Failed to load");
-      const data = await response.json();
-      setPlans(data.plans || []);
-    } catch {
-      addToast({ type: "error", title: "Failed to load saved plans" });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [addToast]);
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/auth/signin?callbackUrl=%2Fsaved-plans");
-    } else if (status === "authenticated") {
-      fetchSavedPlans();
+      return;
     }
-  }, [status, router, fetchSavedPlans]);
+    if (status !== "authenticated") return;
+
+    let cancelled = false;
+    fetch("/api/plans")
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to load");
+        return response.json();
+      })
+      .then((data) => {
+        if (!cancelled) setPlans(data.plans || []);
+      })
+      .catch(() => {
+        if (!cancelled) addToast({ type: "error", title: "Failed to load saved plans" });
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [status, router, addToast]);
 
   const handleOpenPlan = (plan: SavedPlan) => {
     loadPlan({ id: plan.id, title: plan.title, items: plan.items });

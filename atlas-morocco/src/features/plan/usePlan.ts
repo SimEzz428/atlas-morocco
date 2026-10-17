@@ -67,9 +67,12 @@ export function usePlan() {
   const syncQueueRef = useRef<Promise<unknown>>(Promise.resolve());
   const syncErrorShownRef = useRef(false);
 
+  // localStorage only exists in the browser, so the saved plan is read after mount;
+  // reading it during render would make the server and client HTML disagree.
   useEffect(() => {
     const stored = readStoredPlan();
     cloudIdRef.current = stored.cloudId;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage
     setPlan(stored);
     setIsHydrated(true);
   }, []);

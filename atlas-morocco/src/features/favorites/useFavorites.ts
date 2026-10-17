@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ToastProvider";
 
@@ -12,40 +12,50 @@ export type Favorite = {
 };
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Favorites are stored with the account they were loaded for, so signing out or switching
+  // accounts never shows the previous account's list and "loading" can be derived.
+  const [loaded, setLoaded] = useState<{ userId: string; favorites: Favorite[] } | null>(null);
   const { data: session, status } = useSession();
   const userId = session?.user?.id;
   const { addToast } = useToast();
 
-  const loadFavorites = useCallback(async () => {
-    if (!userId) {
-      setFavorites([]);
-      return;
-    }
-    setIsLoading(true);
+  const favorites = useMemo(() => (userId && loaded?.userId === userId ? loaded.favorites : []), [userId, loaded]);
+  const isLoading = status === "loading" || (Boolean(userId) && loaded?.userId !== userId);
+
+  const setFavorites = useCallback(
+    (update: (prev: Favorite[]) => Favorite[]) => {
+      if (!userId) return;
+      setLoaded((prev) => ({ userId, favorites: update(prev?.userId === userId ? prev.favorites : []) }));
+    },
+    [userId]
+  );
+
+  const fetchFavorites = useCallback(async (): Promise<Favorite[]> => {
     try {
       const response = await fetch("/api/favorites");
-      if (response.ok) {
-        const data = await response.json();
-        setFavorites(data.favorites || []);
-      }
+      return response.ok ? (await response.json()).favorites || [] : [];
     } catch {
       addToast({ type: "error", title: "Couldn't load your favorites" });
-    } finally {
-      setIsLoading(false);
+      return [];
     }
-  }, [userId, addToast]);
+  }, [addToast]);
+
+  const loadFavorites = useCallback(async () => {
+    if (!userId) return;
+    const list = await fetchFavorites();
+    setLoaded({ userId, favorites: list });
+  }, [userId, fetchFavorites]);
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (!userId) {
-      setFavorites([]);
-      setIsLoading(false);
-      return;
-    }
-    loadFavorites();
-  }, [status, userId, loadFavorites]);
+    if (!userId) return;
+    let cancelled = false;
+    fetchFavorites().then((list) => {
+      if (!cancelled) setLoaded({ userId, favorites: list });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, fetchFavorites]);
 
   const isFavorited = useCallback((citySlug: string) => favorites.some((fav) => fav.citySlug === citySlug), [favorites]);
 
@@ -74,7 +84,7 @@ export function useFavorites() {
         return false;
       }
     },
-    [userId, addToast]
+    [userId, setFavorites, addToast]
   );
 
   const removeFavorite = useCallback(
@@ -91,12 +101,12 @@ export function useFavorites() {
         addToast({ type: "success", title: "Removed from favorites", duration: 2500 });
         return true;
       } catch {
-        setFavorites(previous);
+        setFavorites(() => previous);
         addToast({ type: "error", title: "Failed to remove favorite" });
         return false;
       }
     },
-    [userId, favorites, addToast]
+    [userId, favorites, setFavorites, addToast]
   );
 
   const toggleFavorite = useCallback(
@@ -106,8 +116,8 @@ export function useFavorites() {
 
   return {
     favorites,
-    isLoading: status === "loading" || isLoading,
-    isReady: status !== "loading" && !isLoading,
+    isLoading,
+    isReady: !isLoading,
     isSignedIn: Boolean(userId),
     addFavorite,
     removeFavorite,
