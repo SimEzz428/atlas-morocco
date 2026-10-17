@@ -4,9 +4,8 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { ArrowLeft, Mail, Lock, User } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { AuthShell } from "@/components/AuthShell";
 import { safeCallbackUrl } from "@/lib/redirect";
 
 function SignInForm() {
@@ -39,104 +38,66 @@ function SignInForm() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-stone-600 hover:text-stone-900 mb-6">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
-          <h1 className="h1">Sign in to Atlas Morocco</h1>
-          <p className="lead mt-2">Access your saved trip plans and sync across devices</p>
+    <AuthShell title="Welcome back" subtitle="Sign in to see your saved plans and favorite cities.">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div role="alert" className="flex gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label htmlFor="email" className="label">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input"
+            placeholder="you@example.com"
+          />
         </div>
 
-        <Card>
-          <div className="card-pad">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div role="alert" className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700">
-                  {error}
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
-                  Email address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input"
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? "Signing in..." : "Sign in"}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-stone-600">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="font-medium text-brand-600 hover:text-brand-500"
-                >
-                  Sign up here
-                </Link>
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <div className="text-center">
-          <h2 className="text-sm font-medium text-stone-900 mb-4">Why sign in?</h2>
-          <div className="grid grid-cols-1 gap-3 text-sm text-stone-600">
-            <div className="flex items-center justify-center gap-2">
-              <User className="h-4 w-4" />
-              <span>Save trip plans to your account</span>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Mail className="h-4 w-4" />
-              <span>Access them from any device</span>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Lock className="h-4 w-4" />
-              <span>Keep your favorite cities in one place</span>
-            </div>
-          </div>
+        <div>
+          <label htmlFor="password" className="label">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            placeholder="Your password"
+          />
         </div>
-      </div>
-    </div>
+
+        <button type="submit" disabled={isLoading} className="btn-primary btn-lg w-full">
+          {isLoading ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-stone-600">
+        New to Atlas Morocco?{" "}
+        <Link href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="font-semibold text-brand-700 hover:text-brand-800">
+          Create an account
+        </Link>
+      </p>
+      <p className="mt-3 text-center text-xs text-stone-500">
+        You can also plan without an account; your trip is kept on this device.
+      </p>
+    </AuthShell>
   );
 }
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-stone-50" />}>
+    <Suspense fallback={<div className="min-h-[calc(100vh-4rem)]" />}>
       <SignInForm />
     </Suspense>
   );

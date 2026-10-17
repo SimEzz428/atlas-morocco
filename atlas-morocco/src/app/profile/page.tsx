@@ -4,9 +4,8 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { User, Mail, Calendar, Settings, LogOut, Bookmark, Heart } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Mail, CalendarDays, LogOut, Bookmark, Heart, ChevronRight, MapPin } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 type Profile = {
   user: { name: string | null; email: string | null; createdAt: string };
@@ -32,8 +31,8 @@ export default function ProfilePage() {
 
   if (status !== "authenticated") {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" aria-label="Loading" />
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-600 border-t-transparent" aria-label="Loading" />
       </div>
     );
   }
@@ -41,110 +40,74 @@ export default function ProfilePage() {
   const name = profile?.user.name ?? session?.user?.name ?? "Traveler";
   const email = profile?.user.email ?? session?.user?.email ?? "";
   const stats = profile?.stats;
+  const memberSince = profile
+    ? new Date(profile.user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "…";
 
   return (
-    <div className="bg-stone-50 min-h-[70vh]">
-      <div className="container-pro py-8">
-        <div className="mb-8">
-          <h1 className="h1 text-stone-900">Profile</h1>
-          <p className="text-stone-600">Your account and travel activity</p>
+    <div className="container-pro py-10 sm:py-14">
+      <PageHeader eyebrow="Your account" title="Profile" />
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <section className="card card-pad">
+            <div className="flex items-center gap-4">
+              <span className="flex h-16 w-16 flex-none items-center justify-center rounded-2xl bg-brand-600 font-display text-2xl font-bold text-white">
+                {name.charAt(0).toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <p className="h4 truncate">{name}</p>
+                <p className="flex items-center gap-1.5 truncate text-sm text-stone-600">
+                  <Mail className="h-4 w-4 flex-none" />
+                  {email}
+                </p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-sm text-stone-500">
+                  <CalendarDays className="h-4 w-4 flex-none" />
+                  Member since {memberSince}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="h4 mb-3">Your activity</h2>
+            <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4" data-testid="profile-stats">
+              {[
+                { label: "Saved plans", value: stats?.planCount },
+                { label: "Places planned", value: stats?.placeCount },
+                { label: "Cities planned", value: stats?.cityCount },
+                { label: "Favorite cities", value: stats?.favoriteCount },
+              ].map(({ label, value }) => (
+                <div key={label} className="card flex flex-col-reverse p-4">
+                  <dt className="text-sm text-stone-500">{label}</dt>
+                  <dd className="font-display text-2xl font-bold text-stone-900">{value ?? "…"}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <Card>
-              <div className="card-pad">
-                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Profile Information
-                </h2>
-
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center text-2xl font-semibold text-brand-700">
-                      {name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-stone-900">{name}</p>
-                      <p className="text-stone-600">{email}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="block text-sm font-medium text-stone-700 mb-2">Full Name</span>
-                      <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
-                        <User className="h-4 w-4 text-stone-400" />
-                        <span className="text-stone-900">{name}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="block text-sm font-medium text-stone-700 mb-2">Email Address</span>
-                      <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
-                        <Mail className="h-4 w-4 text-stone-400" />
-                        <span className="text-stone-900 truncate">{email}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="block text-sm font-medium text-stone-700 mb-2">Member Since</span>
-                    <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
-                      <Calendar className="h-4 w-4 text-stone-400" />
-                      <span className="text-stone-900">
-                        {profile ? new Date(profile.user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "…"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card>
-              <div className="card-pad">
-                <h2 className="text-xl font-semibold mb-4">Your Activity</h2>
-                <dl className="space-y-3" data-testid="profile-stats">
-                  {[
-                    { label: "Saved plans", value: stats?.planCount },
-                    { label: "Places planned", value: stats?.placeCount },
-                    { label: "Cities planned", value: stats?.cityCount },
-                    { label: "Favorite cities", value: stats?.favoriteCount },
-                  ].map(({ label, value }) => (
-                    <div key={label} className="flex justify-between items-center">
-                      <dt className="text-stone-600">{label}</dt>
-                      <dd className="font-semibold text-stone-900">{value ?? "…"}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </Card>
-
-            <Card>
-              <div className="card-pad">
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Account
-                </h2>
-                <div className="space-y-3">
-                  <Link href="/saved-plans" className="btn-secondary w-full">
-                    <Bookmark className="h-4 w-4" />
-                    My Plans
-                  </Link>
-                  <Link href="/favorites" className="btn-secondary w-full">
-                    <Heart className="h-4 w-4" />
-                    My Favorites
-                  </Link>
-                  <Button variant="danger" onClick={() => signOut({ callbackUrl: "/" })} className="w-full">
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
+        <aside className="card self-start p-2">
+          {[
+            { href: "/saved-plans", label: "My saved plans", icon: Bookmark },
+            { href: "/favorites", label: "My favorite cities", icon: Heart },
+            { href: "/plan", label: "Open the planner", icon: MapPin },
+          ].map(({ href, label, icon: Icon }) => (
+            <Link key={href} href={href} className="flex items-center gap-3 rounded-xl px-3 py-3 text-stone-700 transition-colors hover:bg-stone-50">
+              <Icon className="h-5 w-5 text-stone-400" />
+              <span className="flex-1 font-medium">{label}</span>
+              <ChevronRight className="h-4 w-4 text-stone-300" />
+            </Link>
+          ))}
+          <div className="my-1 border-t border-stone-100" />
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left font-medium text-red-600 transition-colors hover:bg-red-50"
+          >
+            <LogOut className="h-5 w-5" />
+            Sign Out
+          </button>
+        </aside>
       </div>
     </div>
   );

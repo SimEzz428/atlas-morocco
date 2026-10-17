@@ -4,9 +4,8 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { ArrowLeft } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { AuthShell } from "@/components/AuthShell";
 import { safeCallbackUrl } from "@/lib/redirect";
 
 function SignUpForm() {
@@ -49,102 +48,79 @@ function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-stone-600 hover:text-stone-900 transition-colors mb-4">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
-          <h1 className="h1 text-stone-900 mb-2">Create Account</h1>
-          <p className="text-stone-600">Join Atlas Morocco and start planning your perfect trip</p>
+    <AuthShell title="Create your account" subtitle="Save your plans and favorites, and pick up where you left off on any device.">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label htmlFor="name" className="label">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input"
+            placeholder="Your name"
+            required
+          />
         </div>
 
-        <Card>
-          <div className="card-pad">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="email" className="label">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="password" className="label">Password</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            placeholder="At least 6 characters"
+            aria-describedby="password-hint"
+            required
+            minLength={6}
+            maxLength={72}
+          />
+          <p id="password-hint" className="mt-1.5 text-xs text-stone-500">Use 6 to 72 characters.</p>
+        </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input"
-                  placeholder="At least 6 characters"
-                  required
-                  minLength={6}
-                  maxLength={72}
-                />
-              </div>
-
-              {error && (
-                <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating Account..." : "Create Account"}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-stone-600">
-                Already have an account?{" "}
-                <Link
-                  href={`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="font-medium text-brand-600 hover:text-brand-500"
-                >
-                  Sign in
-                </Link>
-              </p>
-            </div>
+        {error && (
+          <div role="alert" className="flex gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
+            {error}
           </div>
-        </Card>
-      </div>
-    </div>
+        )}
+
+        <button type="submit" className="btn-primary btn-lg w-full" disabled={isLoading}>
+          {isLoading ? "Creating Account..." : "Create Account"}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-stone-600">
+        Already have an account?{" "}
+        <Link href={`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="font-semibold text-brand-700 hover:text-brand-800">
+          Sign in
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
 
 export default function SignUpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-stone-50" />}>
+    <Suspense fallback={<div className="min-h-[calc(100vh-4rem)]" />}>
       <SignUpForm />
     </Suspense>
   );

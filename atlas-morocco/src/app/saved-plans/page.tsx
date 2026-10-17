@@ -4,28 +4,14 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  Calendar,
-  MapPin,
-  Trash2,
-  Plus,
-  Building,
-  ShoppingBag,
-  Mountain,
-  UtensilsCrossed,
-  Coffee,
-  Eye,
-  Navigation,
-  FolderOpen,
-  CheckCircle2,
-} from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import Image from "next/image";
+import { CalendarDays, MapPin, Trash2, Plus, FolderOpen, CheckCircle2, Compass } from "lucide-react";
 import { useToast } from "@/components/ToastProvider";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { usePlanContext } from "@/features/plan/PlanProvider";
 import type { PlanPlace } from "@/features/plan/usePlan";
 import { getCity } from "@/data/cities";
+import { getCityCover, unsplashImage } from "@/data/cityImages";
 
 interface SavedPlan {
   id: string;
@@ -35,22 +21,6 @@ interface SavedPlan {
   updatedAt: string;
   items: PlanPlace[];
 }
-
-const CATEGORY_STYLES: Record<string, { Icon: typeof Building; className: string }> = {
-  restaurant: { Icon: UtensilsCrossed, className: "bg-brand-100 text-brand-700" },
-  food: { Icon: UtensilsCrossed, className: "bg-brand-100 text-brand-700" },
-  cafe: { Icon: Coffee, className: "bg-yellow-100 text-yellow-700" },
-  shopping: { Icon: ShoppingBag, className: "bg-purple-100 text-purple-700" },
-  market: { Icon: ShoppingBag, className: "bg-purple-100 text-purple-700" },
-  souk: { Icon: ShoppingBag, className: "bg-purple-100 text-purple-700" },
-  nature: { Icon: Mountain, className: "bg-green-100 text-green-700" },
-  garden: { Icon: Mountain, className: "bg-green-100 text-green-700" },
-  beach: { Icon: Mountain, className: "bg-green-100 text-green-700" },
-  viewpoint: { Icon: Eye, className: "bg-pink-100 text-pink-700" },
-  view: { Icon: Eye, className: "bg-pink-100 text-pink-700" },
-  daytrip: { Icon: Navigation, className: "bg-indigo-100 text-indigo-700" },
-};
-const DEFAULT_STYLE = { Icon: Building, className: "bg-blue-100 text-blue-700" };
 
 const totalDays = (items: PlanPlace[]) => Math.max(1, ...items.map((item) => Number(item.day) || 1));
 const citiesIn = (items: PlanPlace[]) => [...new Set(items.map((item) => item.city))];
@@ -114,16 +84,28 @@ export default function SavedPlansPage() {
     }
   };
 
+  const header = (
+    <PageHeader
+      eyebrow="Your account"
+      title="My Saved Plans"
+      description="Every plan you build while signed in is saved here. Open one to keep editing it."
+      actions={
+        <Link href="/plan" className="btn-primary">
+          <Plus className="h-4 w-4" />
+          Go to Planner
+        </Link>
+      }
+    />
+  );
+
   if (status !== "authenticated" || isLoading) {
     return (
-      <div className="container-pro py-8">
-        <div className="space-y-6">
-          <div className="h-8 w-64 bg-stone-200 rounded animate-pulse" />
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 bg-stone-200 rounded-2xl animate-pulse" />
-            ))}
-          </div>
+      <div className="container-pro py-10 sm:py-14">
+        {header}
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-80 animate-pulse rounded-2xl bg-stone-200" />
+          ))}
         </div>
       </div>
     );
@@ -132,135 +114,123 @@ export default function SavedPlansPage() {
   const allCities = new Set(plans.flatMap((plan) => citiesIn(plan.items)));
 
   return (
-    <div className="container-pro py-8">
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="h1">My Saved Plans</h1>
-            <p className="text-stone-600 mt-2">Open a plan to keep editing it, or start a new one.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/plan" className="btn-primary">
-              <Plus className="h-4 w-4" />
-              Go to Planner
-            </Link>
-            <Link href="/cities" className="btn-secondary">
-              <MapPin className="h-4 w-4" />
-              Explore Cities
-            </Link>
-          </div>
-        </div>
+    <div className="container-pro py-10 sm:py-14">
+      {header}
 
-        {plans.length === 0 ? (
-          <Card>
-            <div className="card-pad text-center py-12">
-              <Calendar className="h-12 w-12 text-stone-400 mx-auto mb-4" />
-              <h2 className="text-lg font-semibold text-stone-900 mb-2">No Saved Plans Yet</h2>
-              <p className="text-stone-600 mb-6">Plans you build while signed in are saved here automatically.</p>
+      {plans.length > 0 && (
+        <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-stone-200 bg-stone-200 sm:grid-cols-4">
+          {[
+            { value: plans.length, label: plans.length === 1 ? "Plan" : "Plans" },
+            { value: plans.reduce((sum, plan) => sum + plan.items.length, 0), label: "Places" },
+            { value: plans.reduce((sum, plan) => sum + totalDays(plan.items), 0), label: "Days planned" },
+            { value: allCities.size, label: allCities.size === 1 ? "City" : "Cities" },
+          ].map(({ value, label }) => (
+            <div key={label} className="bg-white px-5 py-4">
+              <dd className="font-display text-2xl font-bold text-stone-900">{value}</dd>
+              <dt className="text-sm text-stone-500">{label}</dt>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {plans.length === 0 ? (
+        <div className="card mt-8 overflow-hidden">
+          <div className="pattern-zellige bg-sand-100 px-6 py-16 text-center">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+              <CalendarDays className="h-7 w-7 text-brand-600" />
+            </span>
+            <h2 className="h3 mt-5">No Saved Plans Yet</h2>
+            <p className="mx-auto mt-2 max-w-md text-stone-600">
+              Add places from any city and your plan is saved here automatically while you&apos;re signed in.
+            </p>
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <Link href="/plan" className="btn-primary">
                 <Plus className="h-4 w-4" />
                 Create Your First Plan
               </Link>
+              <Link href="/cities" className="btn-secondary">
+                <Compass className="h-4 w-4" />
+                Browse cities
+              </Link>
             </div>
-          </Card>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {plans.map((plan) => {
-              const isCurrent = currentPlan.cloudId === plan.id;
-              const cities = citiesIn(plan.items);
-              return (
-                <Card key={plan.id} className="hover:shadow-lg transition-shadow" data-testid="saved-plan">
-                  <div className="p-6 flex flex-col h-full">
-                    <div className="flex items-start justify-between gap-3 mb-4">
-                      <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-semibold text-stone-900 mb-2 truncate">{plan.title}</h2>
-                        <div className="flex flex-wrap gap-1.5">
-                          {isCurrent && (
-                            <Badge variant="success" size="sm">
-                              <CheckCircle2 className="h-3 w-3" />
-                              Open in planner
-                            </Badge>
-                          )}
-                          {cities.slice(0, 3).map((slug) => (
-                            <Badge key={slug} variant="accent" size="sm">
-                              {getCity(slug)?.name ?? slug}
-                            </Badge>
-                          ))}
-                          {cities.length > 3 && <Badge size="sm">+{cities.length - 3}</Badge>}
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeletePlan(plan)}
-                        disabled={deletingPlanId === plan.id}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        aria-label={`Delete ${plan.title}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-stone-600 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {totalDays(plan.items)} {totalDays(plan.items) === 1 ? "day" : "days"}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {plan.items.length} {plan.items.length === 1 ? "place" : "places"}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      {plan.items.slice(0, 3).map((item) => {
-                        const { Icon, className } = CATEGORY_STYLES[item.category?.toLowerCase()] ?? DEFAULT_STYLE;
-                        return (
-                          <div key={item.id} className="flex items-center gap-2 text-sm">
-                            <div className={`p-1 rounded ${className}`}>
-                              <Icon className="h-4 w-4" />
-                            </div>
-                            <span className="text-stone-700 truncate flex-1">{item.name}</span>
-                            <Badge size="sm">Day {item.day || 1}</Badge>
-                          </div>
-                        );
-                      })}
-                      {plan.items.length > 3 && <div className="text-xs text-stone-500">+{plan.items.length - 3} more places</div>}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 mt-auto border-t border-stone-200">
-                      <div className="text-xs text-stone-500">Updated {formatDate(plan.updatedAt)}</div>
-                      <Button variant="secondary" size="sm" onClick={() => handleOpenPlan(plan)} data-testid="open-plan">
-                        <FolderOpen className="h-4 w-4" />
+          </div>
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {plans.map((plan) => {
+            const isCurrent = currentPlan.cloudId === plan.id;
+            const cities = citiesIn(plan.items);
+            const cover = cities[0] ? getCityCover(cities[0]) : undefined;
+            const days = totalDays(plan.items);
+            return (
+              <article key={plan.id} className="card flex flex-col overflow-hidden" data-testid="saved-plan">
+                <div className="relative h-36 bg-sand-200">
+                  {cover && (
+                    <Image src={unsplashImage(cover, 700, 300)} alt="" fill sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw" className="object-cover" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 p-3">
+                    {isCurrent && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white">
+                        <CheckCircle2 className="h-3 w-3" />
                         Open in planner
-                      </Button>
-                    </div>
+                      </span>
+                    )}
+                    {cities.slice(0, 3).map((slug) => (
+                      <span key={slug} className="rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-semibold text-stone-800">
+                        {getCity(slug)?.name ?? slug}
+                      </span>
+                    ))}
+                    {cities.length > 3 && <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-semibold text-stone-800">+{cities.length - 3}</span>}
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-
-        {plans.length > 0 && (
-          <div className="bg-stone-50 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-stone-900 mb-4">Your Travel Stats</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { value: plans.length, label: "Plans", color: "text-blue-600" },
-                { value: plans.reduce((sum, plan) => sum + plan.items.length, 0), label: "Places", color: "text-green-600" },
-                { value: plans.reduce((sum, plan) => sum + totalDays(plan.items), 0), label: "Days Planned", color: "text-purple-600" },
-                { value: allCities.size, label: "Cities", color: "text-brand-600" },
-              ].map(({ value, label, color }) => (
-                <div key={label} className="text-center">
-                  <div className={`text-2xl font-bold ${color}`}>{value}</div>
-                  <div className="text-sm text-stone-600">{label}</div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="h4 truncate">{plan.title}</h2>
+                    <button
+                      onClick={() => handleDeletePlan(plan)}
+                      disabled={deletingPlanId === plan.id}
+                      className="-mr-1 -mt-1 flex-none rounded-lg p-2 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                      aria-label={`Delete ${plan.title}`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="mt-1 flex items-center gap-3 text-sm text-stone-500">
+                    <span className="inline-flex items-center gap-1">
+                      <CalendarDays className="h-4 w-4" />
+                      {days} {days === 1 ? "day" : "days"}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {plan.items.length} {plan.items.length === 1 ? "place" : "places"}
+                    </span>
+                  </p>
+
+                  <ol className="mt-4 flex-1 space-y-1.5">
+                    {plan.items.slice(0, 3).map((item, i) => (
+                      <li key={item.id} className="flex items-center gap-2 text-sm text-stone-700">
+                        <span className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-700">{i + 1}</span>
+                        <span className="truncate">{item.name}</span>
+                      </li>
+                    ))}
+                    {plan.items.length > 3 && <li className="pl-7 text-xs text-stone-500">+{plan.items.length - 3} more places</li>}
+                  </ol>
+
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-stone-100 pt-4">
+                    <span className="text-xs text-stone-500">Updated {formatDate(plan.updatedAt)}</span>
+                    <button onClick={() => handleOpenPlan(plan)} className="btn-secondary btn-sm text-sm" data-testid="open-plan">
+                      <FolderOpen className="h-4 w-4" />
+                      Open in planner
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

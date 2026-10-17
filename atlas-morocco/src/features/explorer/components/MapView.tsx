@@ -2,9 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import L from "leaflet";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 type CityPoint = {
   slug: string;
@@ -18,17 +15,13 @@ type CityPoint = {
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-// Static image imports are objects under webpack but plain URL strings under Turbopack.
-const assetUrl = (img: string | { src: string }) => (typeof img === "string" ? img : img.src);
-
-const icon = L.icon({
-  iconUrl: assetUrl(markerIcon),
-  iconRetinaUrl: assetUrl(markerIcon2x),
-  shadowUrl: assetUrl(markerShadow),
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+// Terracotta map pin (brand-600) drawn as SVG so it matches the site palette.
+const icon = L.divIcon({
+  className: "",
+  html: `<svg width="30" height="40" viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="#B84D28" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5" fill="#fff"/></svg>`,
+  iconSize: [30, 40],
+  iconAnchor: [15, 39],
+  popupAnchor: [0, -34],
 });
 
 export default function MapView({ cities }: { cities: CityPoint[] }) {
@@ -36,7 +29,9 @@ export default function MapView({ cities }: { cities: CityPoint[] }) {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const map = L.map(containerRef.current).setView([31.7, -7.6], 6);
+    // Zoom buttons go top-right: the floating city list covers the left edge on desktop.
+    const map = L.map(containerRef.current, { zoomControl: false }).setView([31.7, -7.6], 6);
+    L.control.zoom({ position: "topright" }).addTo(map);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
@@ -48,7 +43,7 @@ export default function MapView({ cities }: { cities: CityPoint[] }) {
             <h3 style="font-weight:600;font-size:16px;margin:0 0 4px">${escapeHtml(city.name)}</h3>
             <p style="margin:0 0 8px;color:#475569">${escapeHtml(city.description)}</p>
             <p style="margin:0 0 10px;color:#64748b;font-size:12px">${city.placeCount} places to explore</p>
-            <a href="/cities/${encodeURIComponent(city.slug)}" style="display:inline-block;padding:6px 12px;border-radius:8px;background:#d97706;color:#fff;text-decoration:none">Open city guide</a>
+            <a href="/cities/${encodeURIComponent(city.slug)}" style="display:inline-block;padding:6px 12px;border-radius:8px;background:#B84D28;color:#fff;text-decoration:none">Open city guide</a>
           </div>`,
           { maxWidth: 300 }
         )
@@ -56,7 +51,13 @@ export default function MapView({ cities }: { cities: CityPoint[] }) {
     );
 
     if (markers.length) {
-      map.fitBounds(L.featureGroup(markers).getBounds().pad(0.2), { animate: false });
+      // Keep pins clear of the floating city list (desktop) or the city strip (phones).
+      const desktop = window.matchMedia("(min-width: 1024px)").matches;
+      map.fitBounds(L.featureGroup(markers).getBounds(), {
+        animate: false,
+        paddingTopLeft: [desktop ? 360 : 30, 40],
+        paddingBottomRight: [40, desktop ? 40 : 90],
+      });
     }
 
     return () => {
